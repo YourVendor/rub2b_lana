@@ -1,0 +1,7 @@
+fastapi==0.95.0
+uvicorn==0.21.1
+mysql-connector-python==8.0.33
+sqlalchemy==1.4.47
+pyjwt==2.6.0
+python-jose==3.3.0
+cryptography==38.0.4
