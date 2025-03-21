@@ -1,24 +1,26 @@
 from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.middleware.cors import CORSMiddleware  # Добавь
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
-from fastapi.middleware.cors import CORSMiddleware
 import jwt
 
 app = FastAPI()
+
+# Настройка CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://rub2b.ru", "https://rub2b.ru"],
+    allow_origins=["https://rub2b.ru", "https://www.rub2b.ru"],  # Разреши оба домена
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 SECRET_KEY = "твой_секретный_ключ_смени_потом"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-# MySQL на reg.ru
 DATABASE_URL = "mysql+mysqlconnector://u3054650_germush:Gremushka27112007@localhost/u3054650_rub2b"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

@@ -9,7 +9,7 @@ const App = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://37.140.192.91:8000/login', {
+      const response = await fetch('https://rub2b.ru:443/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ login, password }),
