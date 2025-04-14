@@ -1,14 +1,6 @@
-# Виртуальное окружение
+node_modules/
 venv/
+.git/
+dist/
+.env
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Логи и временные файлы
-*.log
-*.pid
-
-# Билд фронта
-frontend/build/
-frontend/node_modules/
