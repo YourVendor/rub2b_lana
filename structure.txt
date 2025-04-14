@@ -1,9 +1,9 @@
 rub2b_lana/
   .gitignore
-  structure.txt        # Новый файл с описанием структуры
+  structure.txt
   backend/
-    main.py           # FastAPI с авторизацией
-    requirements.txt  # Зависимости Python
+    main.py
+    requirements.txt
   frontend/
     .gitignore
     package.json
@@ -18,7 +18,12 @@ rub2b_lana/
       manifest.json
       robots.txt
     src/
-      App.tsx        # Форма логина
-      Dashboard.tsx  # Дашборд
-      index.tsx      # Роутинг
-      index.css      # Базовые стили
+      App.tsx
+      components/
+        Dashboard.tsx
+        DataTable.tsx  # Удалить
+        QueryForm.tsx  # Удалить
+      pages/
+        Admin.tsx
+      index.tsx
+      index.css
