@@ -106,7 +106,7 @@ def run_query(query: QueryIn, token: str = Depends(oauth2_scheme), db: Session =
         # Проверяем, есть ли запрос с таким именем и автором
         existing_query = db.query(Query).filter(Query.name == query.name, Query.author == query.author).first()
         if existing_query:
-            raise HTTPException(status_code=400, detail="Запрос с таким именем уже существует")
+            raise HTTPException(status_code=400, detail=f"Запрос с именем '{query.name}' уже существует")
         # Сохраняем запрос
         db_query = Query(name=query.name, query_text=query.query_text, author=query.author, active=query.active)
         db.add(db_query)
@@ -116,6 +116,30 @@ def run_query(query: QueryIn, token: str = Depends(oauth2_scheme), db: Session =
         raise he
     except Exception as e:
         logger.error(f"Ошибка в run_query: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.put("/admin/query/{query_id}")
+def update_query(query_id: int, query: QueryIn, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        if payload["role"] != "admin":
+            raise HTTPException(status_code=403, detail="Только для админов")
+        logger.info(f"Обновляется запрос ID {query_id}: {query.query_text}")
+        db_query = db.query(Query).filter(Query.id == query_id).first()
+        if not db_query:
+            raise HTTPException(status_code=404, detail="Запрос не найден")
+        result = db.execute(text(query.query_text))
+        rows = [dict(row) for row in result.mappings()]
+        db.commit()
+        # Обновляем поля
+        db_query.name = query.name
+        db_query.query_text = query.query_text
+        db_query.author = query.author
+        db_query.active = query.active
+        db.commit()
+        return {"result": rows}
+    except Exception as e:
+        logger.error(f"Ошибка в update_query: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/admin/queries")

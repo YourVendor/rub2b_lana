@@ -87,7 +87,7 @@ const Admin: React.FC = () => {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        if (errorData.detail.includes("Запрос с таким именем уже существует")) {
+        if (errorData.detail.includes("Запрос с именем")) {
           const existing = queries.find((q) => q.name === queryName && q.author === "germush");
           setOverwriteQuery(existing || null);
           return;
@@ -115,8 +115,8 @@ const Admin: React.FC = () => {
     const token = localStorage.getItem("token");
     if (!token || !overwriteQuery) return;
     try {
-      const response = await fetch("http://127.0.0.1:8000/admin/query", {
-        method: "POST",
+      const response = await fetch(`http://127.0.0.1:8000/admin/query/${overwriteQuery.id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -128,7 +128,10 @@ const Admin: React.FC = () => {
           active: true,
         }),
       });
-      if (!response.ok) throw new Error("Ошибка перезаписи запроса");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Ошибка перезаписи запроса");
+      }
       const data = await response.json();
       setResult(data.result);
       setError(null);
