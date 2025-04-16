@@ -109,7 +109,7 @@ class PriceUploadConfig(BaseModel):
 
     @field_validator("update_missing")
     def validate_update_missing(cls, v):
-        valid_options = ["zero", "skip", "null"]
+        valid_options = ["zero", "skip", "null", "ignore"]
         if v not in valid_options:
             raise ValueError(f"update_missing must be one of {valid_options}")
         return v
@@ -264,8 +264,7 @@ async def upload_price(
             logger.error(f"Company with id {config_obj.company_id} not found")
             raise HTTPException(status_code=404, detail=f"Компания с id {config_obj.company_id} не найдена")
         
-        # Читаем Excel через BytesIO
-        file_content = await file.read()  # Читаем файл в память
+        file_content = await file.read()
         excel_buffer = io.BytesIO(file_content)
         df = pd.read_excel(excel_buffer)
         logger.info(f"Excel columns: {list(df.columns)}")
@@ -283,7 +282,14 @@ async def upload_price(
             logger.error(f"Missing columns in Excel: {missing}")
             raise HTTPException(status_code=400, detail=f"Отсутствуют колонки: {missing}")
         
-        return {"status": "success", "columns": list(df.columns)}
+        # Формируем превью (первые 30 строк)
+        preview = df.head(30).to_dict(orient="records")
+        
+        return {
+            "status": "success",
+            "columns": list(df.columns),
+            "preview": preview
+        }
     except HTTPException as e:
         logger.error(f"HTTP error in upload_price: {e.detail}")
         raise

@@ -23,7 +23,7 @@ const Moderator: React.FC = () => {
     price_column: "",
     stock_column: "",
     skip_first_row: true,
-    update_missing: "zero",
+    update_missing: "ignore", // Изменили на "ignore"
     update_name: false,
   });
   const [columns, setColumns] = useState<string[]>([]);
@@ -92,8 +92,8 @@ const Moderator: React.FC = () => {
         throw new Error(errorData.detail || "Ошибка загрузки");
       }
       const data = await response.json();
-      setPreview(data.preview);
-      setColumns(Object.keys(data.preview[0]));
+      setPreview(data.preview || []); // Добавили fallback на пустой массив
+      setColumns(data.columns || []); // Используем columns из ответа
       setError(null);
       loadItems();
     } catch (err: any) {
@@ -205,6 +205,8 @@ const Moderator: React.FC = () => {
         >
           <option value="zero">Обнулить остатки</option>
           <option value="ignore">Игнорировать</option>
+          <option value="skip">Пропустить</option>
+          <option value="null">Оставить пустым</option>
         </select>
       </div>
       <div>

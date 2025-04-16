@@ -57,7 +57,7 @@ def test_upload_price(client, setup_data, db):
         "price_column": "Цена",
         "stock_column": "Остаток",
         "skip_first_row": False,
-        "update_missing": "zero",
+        "update_missing": "ignore",
         "update_name": False
     }
     print(f"Sending config: {config}")
@@ -71,6 +71,10 @@ def test_upload_price(client, setup_data, db):
     print(f"Response status: {response.status_code}")
     print(f"Response body: {response.json()}")
     assert response.status_code == 200, f"Upload failed: {response.json()}"
+    assert "preview" in response.json(), "Preview field missing in response"
+    assert isinstance(response.json()["preview"], list), "Preview is not a list"
+    assert len(response.json()["preview"]) == 2, f"Expected 2 rows in preview, got {len(response.json()['preview'])}"
+    assert response.json()["preview"][0]["Код"] == 1, "Incorrect data in preview"  # Изменили на 1
 
 def test_get_company_items(client, setup_data, db):
     response = client.post("/login", json={"login": "petr", "password": "yacigan"})
