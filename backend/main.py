@@ -1,33 +1,36 @@
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
-from pydantic import BaseModel
+from fastapi import FastAPI, Depends, HTTPException, File, UploadFile, Form
+from pydantic import BaseModel, field_validator
+from sqlalchemy.orm import Session
+import logging
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.sql import text
+from sqlalchemy import inspect
 import jwt
 from typing import Optional, List
 import logging
 import pandas as pd
+import json
 import io
 from datetime import datetime, timedelta
-from models.user import User
-from models.goods import Goods
-from models.query import Query
-from models.company import Company
-from models.warehouse import Warehouse
-from models.employee_company import EmployeeCompany
-from models.company_item import CompanyItem
-from models.price_history import PriceHistory
-from models.stock_history import StockHistory
-from models.category import Category
-from models.goods_categories import GoodsCategory
-from models.company_item_categories import CompanyItemCategory
-from models.unit import Unit
+from backend.models.user import User  # Явный импорт
+from backend.models.goods import Goods
+from backend.models.query import Query
+from backend.models.company import Company
+from backend.models.warehouse import Warehouse
+from backend.models.employee_company import EmployeeCompany
+from backend.models.company_item import CompanyItem
+from backend.models.price_history import PriceHistory
+from backend.models.stock_history import StockHistory
+from backend.models.category import Category
+from backend.models.goods_categories import GoodsCategory
+from backend.models.company_item_categories import CompanyItemCategory
+from backend.models.unit import Unit
 
 # Настройка логирования
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("backend.main")
 
 app = FastAPI()
 app.add_middleware(
@@ -95,14 +98,30 @@ class CompanyItemIn(BaseModel):
 class PriceUploadConfig(BaseModel):
     company_id: int
     identifier_column: str
-    ean13_column: Optional[str] = None
+    ean13_column: str
     name_column: str
-    unit_column: Optional[str] = None
+    unit_column: str
     price_column: str
     stock_column: str
-    skip_first_row: bool = True
-    update_missing: str = "zero"  # "zero" or "ignore"
-    update_name: bool = False
+    skip_first_row: bool
+    update_missing: str
+    update_name: bool
+
+    @field_validator("update_missing")
+    def validate_update_missing(cls, v):
+        valid_options = ["zero", "skip", "null"]
+        if v not in valid_options:
+            raise ValueError(f"update_missing must be one of {valid_options}")
+        return v
+
+class CompanyItemUpdate(BaseModel):
+    identifier: Optional[str] = None
+    ean13: Optional[str] = None
+    name: Optional[str] = None
+    unit_id: Optional[int] = None
+    base_price: Optional[float] = None
+    stock: Optional[int] = None
+    price_type: Optional[str] = None
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -128,8 +147,9 @@ def get_structure(token: str = Depends(oauth2_scheme), db: Session = Depends(get
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         if payload["role"] != "admin":
             raise HTTPException(status_code=403, detail="Только для админов")
-        tables = db.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"))
-        return {"tables": [row[0] for row in tables.fetchall()]}
+        inspector = inspect(db.get_bind())
+        tables = inspector.get_table_names()
+        return {"tables": tables}
     except Exception as e:
         logger.error(f"Ошибка в get_structure: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -211,93 +231,65 @@ def delete_query(query_id: int, token: str = Depends(oauth2_scheme), db: Session
 @app.post("/moderator/upload-price")
 async def upload_price(
     file: UploadFile = File(...),
-    config: PriceUploadConfig = Depends(),
+    config: str = Form(...),
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
 ):
+    logger.info(f"Received file: {file.filename}")
     try:
+        config_data = json.loads(config)
+        config_obj = PriceUploadConfig(**config_data)
+        logger.info(f"Parsed config: {config_obj}")
+        
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        if payload["role"] not in ["moderator", "admin"]:
-            raise HTTPException(status_code=403, detail="Только для модераторов или админов")
+        if payload["role"] != "moderator":
+            logger.error(f"User {payload['sub']} is not a moderator")
+            raise HTTPException(status_code=403, detail="Только для модераторов")
         
-        # Читаем Excel
-        contents = await file.read()
-        df = pd.read_excel(io.BytesIO(contents))
-        if config.skip_first_row:
-            df = df.iloc[1:]
+        user = db.query(User).filter(User.login == payload["sub"]).first()
+        if not user:
+            logger.error(f"User {payload['sub']} not found")
+            raise HTTPException(status_code=404, detail="Пользователь не найден")
         
-        # Превью (30 строк)
-        preview = df.head(30).to_dict(orient="records")
+        employee = db.query(EmployeeCompany).filter(
+            EmployeeCompany.user_id == user.id,
+            EmployeeCompany.company_id == config_obj.company_id
+        ).first()
+        if not employee:
+            logger.error(f"Moderator {payload['sub']} not associated with company {config_obj.company_id}")
+            raise HTTPException(status_code=403, detail="Вы не связаны с этой компанией")
         
-        # Валидация колонок
-        required_columns = [config.identifier_column, config.name_column, config.price_column, config.stock_column]
-        if config.ean13_column:
-            required_columns.append(config.ean13_column)
-        if config.unit_column:
-            required_columns.append(config.unit_column)
-        missing_columns = [col for col in required_columns if col not in df.columns]
-        if missing_columns:
-            raise HTTPException(status_code=400, detail=f"Отсутствуют колонки: {', '.join(missing_columns)}")
+        company = db.query(Company).filter(Company.id == config_obj.company_id).first()
+        if not company:
+            logger.error(f"Company with id {config_obj.company_id} not found")
+            raise HTTPException(status_code=404, detail=f"Компания с id {config_obj.company_id} не найдена")
         
-        # Обработка прайса
-        for _, row in df.iterrows():
-            identifier = str(row[config.identifier_column])
-            ean13 = str(row[config.ean13_column]) if config.ean13_column and pd.notna(row[config.ean13_column]) else None
-            name = str(row[config.name_column])
-            unit_id = None
-            if config.unit_column and pd.notna(row[config.unit_column]):
-                unit = db.query(Unit).filter(Unit.name == str(row[config.unit_column])).first()
-                unit_id = unit.id if unit else None
-            base_price = float(row[config.price_column])
-            stock = int(row[config.stock_column])
-            
-            # Проверяем существующую позицию
-            item = db.query(CompanyItem).filter(
-                CompanyItem.company_id == config.company_id,
-                CompanyItem.identifier == identifier
-            ).first()
-            
-            if item:
-                # Обновляем
-                if config.update_name:
-                    item.name = name
-                item.ean13 = ean13
-                item.unit_id = unit_id
-                item.base_price = base_price
-                item.stock = stock
-            else:
-                # Создаём новую
-                item = CompanyItem(
-                    company_id=config.company_id,
-                    identifier=identifier,
-                    ean13=ean13,
-                    name=name,
-                    unit_id=unit_id,
-                    base_price=base_price,
-                    stock=stock
-                )
-                db.add(item)
-                db.flush()  # Получаем item.id
-            
-            # История цен
-            db.add(PriceHistory(company_item_id=item.id, price=base_price))
-            # История остатков
-            db.add(StockHistory(company_item_id=item.id, stock=stock))
+        # Читаем Excel через BytesIO
+        file_content = await file.read()  # Читаем файл в память
+        excel_buffer = io.BytesIO(file_content)
+        df = pd.read_excel(excel_buffer)
+        logger.info(f"Excel columns: {list(df.columns)}")
         
-        # Обработка отсутствующих позиций
-        if config.update_missing == "zero":
-            existing_items = db.query(CompanyItem).filter(CompanyItem.company_id == config.company_id).all()
-            uploaded_identifiers = set(df[config.identifier_column].astype(str))
-            for item in existing_items:
-                if item.identifier not in uploaded_identifiers:
-                    item.stock = 0
-                    db.add(StockHistory(company_item_id=item.id, stock=0))
+        required_columns = [
+            config_obj.identifier_column,
+            config_obj.ean13_column,
+            config_obj.name_column,
+            config_obj.unit_column,
+            config_obj.price_column,
+            config_obj.stock_column
+        ]
+        if not all(col in df.columns for col in required_columns):
+            missing = [col for col in required_columns if col not in df.columns]
+            logger.error(f"Missing columns in Excel: {missing}")
+            raise HTTPException(status_code=400, detail=f"Отсутствуют колонки: {missing}")
         
-        db.commit()
-        return {"preview": preview, "message": "Прайс загружен"}
+        return {"status": "success", "columns": list(df.columns)}
+    except HTTPException as e:
+        logger.error(f"HTTP error in upload_price: {e.detail}")
+        raise
     except Exception as e:
-        logger.error(f"Ошибка в upload_price: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
+        logger.error(f"Unexpected error in upload_price: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/moderator/company-items/{company_id}")
 def get_company_items(company_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
@@ -312,27 +304,47 @@ def get_company_items(company_id: int, token: str = Depends(oauth2_scheme), db: 
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put("/moderator/company-item/{item_id}")
-def update_company_item(item_id: int, item_in: CompanyItemIn, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+async def update_company_item(
+    item_id: int,
+    item_data: CompanyItemUpdate,
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
+    logger.info(f"Updating company item {item_id} with data: {item_data}")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        if payload["role"] not in ["moderator", "admin"]:
-            raise HTTPException(status_code=403, detail="Только для модераторов или админов")
+        if payload["role"] != "moderator":
+            raise HTTPException(status_code=403, detail="Только для модераторов")
+        
         item = db.query(CompanyItem).filter(CompanyItem.id == item_id).first()
         if not item:
-            raise HTTPException(status_code=404, detail="Позиция не найдена")
-        item.ean13 = item_in.ean13
-        item.name = item_in.name
-        item.unit_id = item_in.unit_id
-        item.base_price = item_in.base_price
-        item.stock = item_in.stock
-        item.price_type = item_in.price_type
-        db.add(PriceHistory(company_item_id=item.id, price=item_in.base_price))
-        db.add(StockHistory(company_item_id=item.id, stock=item_in.stock))
+            raise HTTPException(status_code=404, detail="Товар не найден")
+        
+        for key, value in item_data.model_dump(exclude_unset=True).items():
+            if key == "price_type":
+                continue
+            setattr(item, key, value)
+        
+        if item_data.price_type == "base":
+            item.base_price = item_data.base_price
+            db.add(PriceHistory(company_item_id=item.id, price=item_data.base_price))
+        
         db.commit()
-        return item
+        db.refresh(item)
+        
+        return {
+            "id": item.id,
+            "company_id": item.company_id,
+            "identifier": item.identifier,
+            "ean13": item.ean13,
+            "name": item.name,
+            "unit_id": item.unit_id,
+            "base_price": item.base_price,
+            "stock": item.stock
+        }
     except Exception as e:
         logger.error(f"Ошибка в update_company_item: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/moderator/average-price/{company_item_id}")
 def get_average_price(company_item_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
