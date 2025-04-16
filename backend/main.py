@@ -2,12 +2,17 @@ from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine, Column, Integer, String, Boolean
-from sqlalchemy.orm import declarative_base, sessionmaker, Session
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.sql import text
 import jwt
 from typing import Optional
 import logging
+from models.user import User
+from models.goods import Goods
+from models.query import Query
+from models.company import Company
+from models.warehouse import Warehouse
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -26,32 +31,13 @@ SECRET_KEY = "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
 DATABASE_URL = "postgresql+psycopg2://germush:Gremushka27112007@localhost/rub2b"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
 
-class User(Base):
-    __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-    login = Column(String(50), unique=True, index=True)
-    password = Column(String(50))
-    role = Column(String(20), default="retail_client")
-
-class Goods(Base):
-    __tablename__ = "goods"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100))
-    price = Column(Integer)
-    description = Column(String(500), nullable=True)
-    category = Column(String(50), nullable=True)
-    stock = Column(Integer, default=0)
-
-class Query(Base):
-    __tablename__ = "queries"
-    id = Column(Integer, primary_key=True, index=True)
-    query_text = Column(String(1000))
-    author = Column(String(50))
-    active = Column(Boolean, default=True)
-
-Base.metadata.create_all(bind=engine)
+# Создание таблиц
+User.metadata.create_all(bind=engine)
+Goods.metadata.create_all(bind=engine)
+Query.metadata.create_all(bind=engine)
+Company.metadata.create_all(bind=engine)
+Warehouse.metadata.create_all(bind=engine)
 
 def get_db():
     db = SessionLocal()
@@ -72,6 +58,7 @@ class GoodsIn(BaseModel):
     stock: int = 0
 
 class QueryIn(BaseModel):
+    name: str
     query_text: str
     author: str
     active: bool = True
@@ -114,13 +101,47 @@ def run_query(query: QueryIn, token: str = Depends(oauth2_scheme), db: Session =
             raise HTTPException(status_code=403, detail="Только для админов")
         logger.info(f"Выполняется запрос: {query.query_text}")
         result = db.execute(text(query.query_text))
-        rows = [dict(row) for row in result.mappings()]  # Используем mappings для словарей
+        rows = [dict(row) for row in result.mappings()]
         db.commit()
-        # Сохраняем запрос в таблицу queries
-        db_query = Query(query_text=query.query_text, author=query.author, active=query.active)
+        # Проверяем, есть ли запрос с таким именем и автором
+        existing_query = db.query(Query).filter(Query.name == query.name, Query.author == query.author).first()
+        if existing_query:
+            raise HTTPException(status_code=400, detail="Запрос с таким именем уже существует")
+        # Сохраняем запрос
+        db_query = Query(name=query.name, query_text=query.query_text, author=query.author, active=query.active)
         db.add(db_query)
         db.commit()
         return {"result": rows}
+    except HTTPException as he:
+        raise he
     except Exception as e:
         logger.error(f"Ошибка в run_query: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/admin/queries")
+def get_queries(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        if payload["role"] != "admin":
+            raise HTTPException(status_code=403, detail="Только для админов")
+        queries = db.query(Query).filter(Query.active == True).all()
+        return queries
+    except Exception as e:
+        logger.error(f"Ошибка в get_queries: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/admin/query/{query_id}")
+def delete_query(query_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        if payload["role"] != "admin":
+            raise HTTPException(status_code=403, detail="Только для админов")
+        query = db.query(Query).filter(Query.id == query_id).first()
+        if not query:
+            raise HTTPException(status_code=404, detail="Запрос не найден")
+        db.delete(query)
+        db.commit()
+        return {"message": "Запрос удалён"}
+    except Exception as e:
+        logger.error(f"Ошибка в delete_query: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
