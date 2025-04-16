@@ -1,7 +1,7 @@
 # backend/tests/test_auth.py
 import pytest
 from fastapi.testclient import TestClient
-from ..main import app  # Исправлено: относительный импорт
+from ..main import app
 
 client = TestClient(app)
 

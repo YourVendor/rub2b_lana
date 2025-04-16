@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, Column, Integer, String, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.sql import text  # Добавлено
 import jwt
 from typing import Optional
 
@@ -36,6 +37,8 @@ class Goods(Base):
     name = Column(String(100))
     price = Column(Integer)
     description = Column(String(500), nullable=True)
+    category = Column(String(50), nullable=True)
+    stock = Column(Integer, default=0)
 
 class Query(Base):
     __tablename__ = "queries"
@@ -61,6 +64,8 @@ class GoodsIn(BaseModel):
     name: str
     price: int
     description: Optional[str] = None
+    category: Optional[str] = None
+    stock: int = 0
 
 class QueryIn(BaseModel):
     query_text: str
@@ -87,20 +92,23 @@ def dashboard(token: str = Depends(oauth2_scheme)):
 
 @app.get("/admin/structure")
 def get_structure(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-    if payload["role"] != "admin":
-        raise HTTPException(status_code=403, detail="Только для админов")
-    tables = db.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
-    return {"tables": [row[0] for row in tables]}
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        if payload["role"] != "admin":
+            raise HTTPException(status_code=403, detail="Только для админов")
+        tables = db.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"))
+        return {"tables": [row[0] for row in tables.fetchall()]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/admin/query")
 def run_query(query: QueryIn, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-    if payload["role"] != "admin":
-        raise HTTPException(status_code=403, detail="Только для админов")
     try:
-        result = db.execute(query.query_text)
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        if payload["role"] != "admin":
+            raise HTTPException(status_code=403, detail="Только для админов")
+        result = db.execute(text(query.query_text))
         db.commit()
-        return {"result": [dict(row) for row in result]}
+        return {"result": [dict(row) for row in result.fetchall()]}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
