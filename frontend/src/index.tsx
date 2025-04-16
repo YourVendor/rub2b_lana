@@ -1,13 +1,15 @@
-// frontend/src/index.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './index.css';
 import App from './App';
 import Dashboard from './components/Dashboard';
 import Admin from './pages/Admin';
-import Goods from './pages/Goods';
+import Moderator from './pages/Moderator';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
 root.render(
   <React.StrictMode>
     <BrowserRouter>
@@ -15,7 +17,7 @@ root.render(
         <Route path="/" element={<App />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/goods" element={<Goods />} />
+        <Route path="/moderator" element={<Moderator />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
