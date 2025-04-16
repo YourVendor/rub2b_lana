@@ -44,7 +44,10 @@ const Admin: React.FC = () => {
         },
         body: JSON.stringify({ query_text: query, author: "germush", active: true }),
       });
-      if (!response.ok) throw new Error("Ошибка выполнения запроса");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Ошибка выполнения запроса");
+      }
       const data = await response.json();
       setResult(data.result);
       setError(null);

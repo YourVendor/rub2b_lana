@@ -3,11 +3,15 @@ from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, Column, Integer, String, Boolean
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.sql import text  # Добавлено
+from sqlalchemy.orm import declarative_base, sessionmaker, Session
+from sqlalchemy.sql import text
 import jwt
 from typing import Optional
+import logging
+
+# Настройка логирования
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 app.add_middleware(
@@ -99,6 +103,7 @@ def get_structure(token: str = Depends(oauth2_scheme), db: Session = Depends(get
         tables = db.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"))
         return {"tables": [row[0] for row in tables.fetchall()]}
     except Exception as e:
+        logger.error(f"Ошибка в get_structure: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/admin/query")
@@ -107,8 +112,15 @@ def run_query(query: QueryIn, token: str = Depends(oauth2_scheme), db: Session =
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         if payload["role"] != "admin":
             raise HTTPException(status_code=403, detail="Только для админов")
+        logger.info(f"Выполняется запрос: {query.query_text}")
         result = db.execute(text(query.query_text))
+        rows = [dict(row) for row in result.mappings()]  # Используем mappings для словарей
         db.commit()
-        return {"result": [dict(row) for row in result.fetchall()]}
+        # Сохраняем запрос в таблицу queries
+        db_query = Query(query_text=query.query_text, author=query.author, active=query.active)
+        db.add(db_query)
+        db.commit()
+        return {"result": rows}
     except Exception as e:
+        logger.error(f"Ошибка в run_query: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))

@@ -1,29 +1,263 @@
+Резюме проекта rub2b_lana (на 16 апреля 2025)
+
+Проект rub2b_lana — это B2B-платформа с авторизацией, админкой и управлением товарами. Бэкенд на FastAPI с PostgreSQL, фронтенд на React с TypeScript. На текущем этапе:
+
+    Работает авторизация (germush — админ, vi — клиент).
+    Админка (/admin) показывает структуру базы (users, goods, queries) и выполняет SQL-запросы (например, SELECT * FROM users;).
+    Дашборд (/dashboard) с кнопками "Товары" и "Админка".
+    Таблица goods готова, но без UI (заглушка в /goods).
+    Тесты для бэка (test_auth.py) проходят.
+
+Структура проекта с описанием
+text
 rub2b_lana/
-  .gitignore
-  structure.txt
-  backend/
-    main.py
-    requirements.txt
-  frontend/
-    .gitignore
-    package.json
-    package-lock.json
-    README.md
-    tsconfig.json
-    public/
-      favicon.ico
-      index.html
-      logo192.png
-      logo512.png
-      manifest.json
-      robots.txt
-    src/
-      App.tsx
-      components/
-        Dashboard.tsx
-        DataTable.tsx  # Удалить
-        QueryForm.tsx  # Удалить
-      pages/
-        Admin.tsx
-      index.tsx
-      index.css
+│
+├── .gitignore
+│   # Игнорирует временные файлы, кэши, зависимости и виртуальное окружение.
+│   # Содержит: __pycache__/, .pytest_cache/, venv/, node_modules/, *.log.
+│
+├── structure.txt
+│   # Документ с описанием структуры проекта (этот текст туда и пойдёт).
+│   # Используется для быстрого понимания проекта.
+│
+├── venv/
+│   # Виртуальное окружение Python.
+│   # Содержит зависимости бэка (FastAPI, SQLAlchemy, PyJWT, psycopg2-binary, httpx).
+│   # Активируется: .\venv\Scripts\activate
+│
+├── backend/
+│   # Бэкенд на FastAPI, отвечает за API, базу и логику.
+│
+│   ├── __init__.py
+│   │   # Пустой файл, делает backend/ пакетом Python.
+│   │   # Нужен для корректных импортов в тестах.
+│   │
+│   ├── main.py
+│   │   # Главный файл бэка.
+│   │   # Содержит: FastAPI-приложение, модели (User, Goods, Query), роуты (/, /login, /dashboard, /admin/structure, /admin/query).
+│   │   # Конфигурация: CORS, PostgreSQL (user: germush, db: rub2b), JWT-аутентификация.
+│   │   # Запуск: uvicorn main:app --host 127.0.0.1 --port 8000
+│   │
+│   ├── pytest.ini
+│   │   # Конфигурация pytest.
+│   │   # Устанавливает asyncio_default_fixture_loop_scope=function для тестов.
+│   │
+│   ├── requirements.txt
+│   │   # Зависимости бэка.
+│   │   # Генерируется: pip freeze > requirements.txt
+│   │   # Основные: fastapi, sqlalchemy, psycopg2-binary, pyjwt, httpx.
+│   │
+│   ├── models/
+│   │   # Модели SQLAlchemy для базы данных.
+│   │
+│   │   ├── __init__.py
+│   │   │   # Пустой файл, делает models/ пакетом.
+│   │   │
+│   │   ├── goods.py
+│   │   │   # Модель Goods.
+│   │   │   # Поля: id (PK), name (str), price (int), description (str, nullable), category (str, nullable), stock (int).
+│   │   │
+│   │   ├── query.py
+│   │   │   # Модель Query.
+│   │   │   # Поля: id (PK), query_text (str), author (str), active (bool).
+│   │   │
+│   │   ├── user.py
+│   │   │   # Модель User.
+│   │   │   # Поля: id (PK), login (str, unique), password (str), role (str, default="retail_client").
+│   │
+│   ├── routers/
+│   │   # Роуты FastAPI, разделённые по функционалу.
+│   │
+│   │   ├── __init__.py
+│   │   │   # Пустой файл, делает routers/ пакетом.
+│   │   │
+│   │   ├── admin.py
+│   │   │   # Роуты админки (/admin/structure, /admin/query).
+│   │   │   # /admin/structure: возвращает список таблиц (users, goods, queries).
+│   │   │   # /admin/query: выполняет SQL-запросы, сохраняет их в таблицу queries.
+│   │   │
+│   │   ├── auth.py
+│   │   │   # Роуты авторизации (/login).
+│   │   │   # /login: проверяет логин/пароль, выдаёт JWT-токен.
+│   │   │
+│   │   ├── goods.py
+│   │   │   # Роуты для товаров (пока пустой или заглушка).
+│   │   │   # Планируется: /goods (GET, POST, PUT, DELETE).
+│   │
+│   ├── schemas/
+│   │   # Pydantic-схемы для валидации данных.
+│   │
+│   │   ├── __init__.py
+│   │   │   # Пустой файл, делает schemas/ пакетом.
+│   │   │
+│   │   ├── goods.py
+│   │   │   # Схема GoodsIn.
+│   │   │   # Поля: name (str), price (int), description (str, optional), category (str, optional), stock (int).
+│   │   │
+│   │   ├── query.py
+│   │   │   # Схема QueryIn.
+│   │   │   # Поля: query_text (str), author (str), active (bool).
+│   │   │
+│   │   ├── user.py
+│   │   │   # Схема UserIn.
+│   │   │   # Поля: login (str), password (str).
+│   │
+│   ├── tests/
+│   │   # Тесты для бэка (pytest).
+│   │
+│   │   ├── __init__.py
+│   │   │   # Пустой файл, делает tests/ пакетом.
+│   │   │
+│   │   ├── test_auth.py
+│   │   │   # Тесты авторизации и админки.
+│   │   │   # Проверяет: /login (возвращает токен), /admin/structure (возвращает таблицы).
+│   │   │   # Запуск: pytest tests/ -v
+│   │
+│   ├── __pycache__/
+│   │   # Кэш Python (автогенерируется).
+│   │   # Игнорируется в .gitignore.
+│   │
+│   ├── .pytest_cache/
+│   │   # Кэш pytest (автогенерируется).
+│   │   # Игнорируется в .gitignore.
+│
+├── frontend/
+│   # Фронтенд на React с TypeScript.
+│
+│   ├── .gitignore
+│   │   # Игнорирует node_modules/, build/, *.log.
+│   │
+│   ├── package.json
+│   │   # Конфигурация фронта.
+│   │   # Зависимости: react, react-dom, react-router-dom, jwt-decode, typescript.
+│   │   # Скрипты: npm start, npm build, npm test.
+│   │
+│   ├── package-lock.json
+│   │   # Фиксирует версии зависимостей (автогенерируется).
+│   │
+│   ├── README.md
+│   │   # Документация фронта (по умолчанию от Create React App).
+│   │
+│   ├── tsconfig.json
+│   │   # Конфигурация TypeScript.
+│   │   # Настройки: strict, esModuleInterop, jsx: react-jsx.
+│   │
+│   ├── public/
+│   │   # Статические файлы фронта.
+│   │
+│   │   ├── favicon.ico
+│   │   │   # Иконка сайта.
+│   │   │
+│   │   ├── index.html
+│   │   │   # Главная HTML-страница.
+│   │   │   # Точка входа React (#root).
+│   │   │
+│   │   ├── logo192.png
+│   │   │   # Логотип для PWA (192x192).
+│   │   │
+│   │   ├── logo512.png
+│   │   │   # Логотип для PWA (512x512).
+│   │   │
+│   │   ├── manifest.json
+│   │   │   # Манифест для PWA.
+│   │   │   # Настройки: имя, иконки, цвета.
+│   │   │
+│   │   ├── robots.txt
+│   │   │   # Правила для поисковых ботов.
+│   │   │
+│   ├── src/
+│   │   # Исходный код фронта.
+│   │
+│   │   ├── App.tsx
+│   │   │   # Компонент логина.
+│   │   │   # Форма: логин/пароль, POST на /login, сохранение токена.
+│   │   │
+│   │   ├── index.tsx
+│   │   │   # Точка входа React.
+│   │   │   # Роутинг: / (App), /dashboard (Dashboard), /admin (Admin), /goods (Goods).
+│   │   │
+│   │   ├── index.css
+│   │   │   # Глобальные стили.
+│   │   │   # Пока минимальные (базовый CSS от CRA).
+│   │   │
+│   │   ├── components/
+│   │   │   # Переиспользуемые компоненты.
+│   │   │
+│   │   │   ├── Dashboard.tsx
+│   │   │   │   # Дашборд.
+│   │   │   │   # Показывает: "Товары" (редирект на /goods), "Админка" (для admin, редирект на /admin).
+│   │   │   │   # Декодирует JWT для проверки роли.
+│   │   │
+│   │   ├── pages/
+│   │   │   # Компоненты страниц.
+│   │   │
+│   │   │   ├── Admin.tsx
+│   │   │   │   # Админка.
+│   │   │   │   # Показывает: структуру базы (GET /admin/structure), поле для SQL (POST /admin/query).
+│   │   │   │
+│   │   │   ├── Goods.tsx
+│   │   │   │   # Страница товаров (заглушка).
+│   │   │   │   # Планируется: таблица с id, name, price, description, category, stock.
+│   │   │
+│   ├── tests/
+│   │   # Тесты для фронта (Jest).
+│   │
+│   │   ├── Admin.test.tsx
+│   │   │   # Тесты для Admin.tsx (пока пустые или заглушки).
+│   │   │
+│   │   ├── Dashboard.test.tsx
+│   │   │   # Тесты для Dashboard.tsx (пока пустые или заглушки).
+│   │   │
+│   │   ├── DataTable.test.tsx
+│   │   │   # Тесты для DataTable.tsx (удалён, но остался в структуре).
+│   │   │   # Удалить, если не нужен.
+│   │   │
+│   │   ├── QueryForm.test.tsx
+│   │   │   # Тесты для QueryForm.tsx (удалён, но остался в структуре).
+│   │   │   # Удалить, если не нужен.
+│
+├── __pycache__/
+│   # Кэш Python корня (автогенерируется).
+│   # Игнорируется в .gitignore.
+│
+├── .pytest_cache/
+│   # Кэш pytest корня (автогенерируется).
+│   # Игнорируется в .gitignore.
+Комментарии
+
+    Отличия от твоей структуры:
+        Ты указал backend/models/, routers/, schemas/, но они пока не созданы. Я их добавил в описание как предполагаемые модули для масштабирования (например, вынести модели из main.py в models/).
+        frontend/tests/*.test.tsx: ты упомянул DataTable.test.tsx и QueryForm.test.tsx, но самих компонентов нет (удалены ранее). Если они не нужны, удали тесты:
+        powershell
+
+    cd D:\VSCODE\rub2b_lana\rub2b_lana\frontend
+    Remove-Item tests\DataTable.test.tsx -ErrorAction SilentlyContinue
+    Remove-Item tests\QueryForm.test.tsx -ErrorAction SilentlyContinue
+    __pycache__ и .pytest_cache дублируются — они автогенерируются и игнорируются.
+
+База данных:
+
+    PostgreSQL: rub2b, пользователь germush, пароль Gremushka27112007.
+    Таблицы:
+        users: id, login, password, role.
+        goods: id, name, price, description, category, stock.
+        queries: id, query_text, author, active.
+
+Запуск:
+
+    Бэк:
+    powershell
+
+cd D:\VSCODE\rub2b_lana\rub2b_lana
+.\venv\Scripts\activate
+cd backend
+uvicorn main:app --host 127.0.0.1 --port 8000
+Фронт:
+powershell
+cd D:\VSCODE\rub2b_lana\rub2b_lana\frontend
+npm start
+Тесты:
+powershell
+cd D:\VSCODE\rub2b_lana\rub2b_lana\backend
+..\venv\Scripts\activate
+pytest tests/ -v
