@@ -47,19 +47,19 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Создание таблиц в правильном порядке
-Unit.metadata.create_all(bind=engine)  # Сначала независимые
-Category.metadata.create_all(bind=engine)
-User.metadata.create_all(bind=engine)
-Company.metadata.create_all(bind=engine)
-Warehouse.metadata.create_all(bind=engine)
-EmployeeCompany.metadata.create_all(bind=engine)
-Goods.metadata.create_all(bind=engine)  # Зависит от Unit
-CompanyItem.metadata.create_all(bind=engine)  # Зависит от Company, Unit
-PriceHistory.metadata.create_all(bind=engine)  # Зависит от CompanyItem
-StockHistory.metadata.create_all(bind=engine)  # Зависит от CompanyItem
-GoodsCategory.metadata.create_all(bind=engine)  # Зависит от Goods, Category
-CompanyItemCategory.metadata.create_all(bind=engine)  # Зависит от CompanyItem, Category
-Query.metadata.create_all(bind=engine)  # Независимая
+# Unit.metadata.create_all(bind=engine)
+# Category.metadata.create_all(bind=engine)
+# User.metadata.create_all(bind=engine)
+# Company.metadata.create_all(bind=engine)
+# Warehouse.metadata.create_all(bind=engine)
+# EmployeeCompany.metadata.create_all(bind=engine)
+# Goods.metadata.create_all(bind=engine)
+# CompanyItem.metadata.create_all(bind=engine)
+# PriceHistory.metadata.create_all(bind=engine)
+# StockHistory.metadata.create_all(bind=engine)
+# GoodsCategory.metadata.create_all(bind=engine)
+# CompanyItemCategory.metadata.create_all(bind=engine)
+# Query.metadata.create_all(bind=engine)
 
 def get_db():
     db = SessionLocal()
@@ -101,7 +101,10 @@ class PriceUploadConfig(BaseModel):
     ean13_column: str
     name_column: str
     unit_column: str
-    price_column: str
+    rrprice_column: str  # Новое поле
+    microwholeprice_column: str  # Новое поле
+    mediumwholeprice_column: str  # Новое поле
+    maxwholeprice_column: str  # Новое поле
     stock_column: str
     skip_first_row: bool
     update_missing: str
@@ -240,17 +243,17 @@ async def upload_price(
         config_data = json.loads(config)
         config_obj = PriceUploadConfig(**config_data)
         logger.info(f"Parsed config: {config_obj}")
-        
+
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         if payload["role"] != "moderator":
             logger.error(f"User {payload['sub']} is not a moderator")
             raise HTTPException(status_code=403, detail="Только для модераторов")
-        
+
         user = db.query(User).filter(User.login == payload["sub"]).first()
         if not user:
             logger.error(f"User {payload['sub']} not found")
             raise HTTPException(status_code=404, detail="Пользователь не найден")
-        
+
         employee = db.query(EmployeeCompany).filter(
             EmployeeCompany.user_id == user.id,
             EmployeeCompany.company_id == config_obj.company_id
@@ -258,37 +261,64 @@ async def upload_price(
         if not employee:
             logger.error(f"Moderator {payload['sub']} not associated with company {config_obj.company_id}")
             raise HTTPException(status_code=403, detail="Вы не связаны с этой компанией")
-        
+
         company = db.query(Company).filter(Company.id == config_obj.company_id).first()
         if not company:
             logger.error(f"Company with id {config_obj.company_id} not found")
             raise HTTPException(status_code=404, detail=f"Компания с id {config_obj.company_id} не найдена")
-        
+
         file_content = await file.read()
         excel_buffer = io.BytesIO(file_content)
         df = pd.read_excel(excel_buffer)
         logger.info(f"Excel columns: {list(df.columns)}")
-        
+
         required_columns = [
             config_obj.identifier_column,
             config_obj.ean13_column,
             config_obj.name_column,
             config_obj.unit_column,
-            config_obj.price_column,
+            config_obj.rrprice_column,
+            config_obj.microwholeprice_column,
+            config_obj.mediumwholeprice_column,
+            config_obj.maxwholeprice_column,
             config_obj.stock_column
         ]
         if not all(col in df.columns for col in required_columns):
             missing = [col for col in required_columns if col not in df.columns]
             logger.error(f"Missing columns in Excel: {missing}")
             raise HTTPException(status_code=400, detail=f"Отсутствуют колонки: {missing}")
-        
-        # Формируем превью (первые 30 строк)
+
+        # Проверка единиц измерения
+        units_in_db = {unit.name for unit in db.query(Unit).all()}
+        units_in_file = set(df[config_obj.unit_column].dropna().unique())
+        unknown_units = list(units_in_file - units_in_db)
+
+        # Обработка ignored_rows
+        ignored_rows = []
+        if config_obj.update_missing == "skip":
+            df = df.dropna(subset=[config_obj.rrprice_column, config_obj.microwholeprice_column,
+                                  config_obj.mediumwholeprice_column, config_obj.maxwholeprice_column])
+            ignored_rows = df[df[[config_obj.rrprice_column, config_obj.microwholeprice_column,
+                                  config_obj.mediumwholeprice_column, config_obj.maxwholeprice_column]].isna().any(axis=1)].to_dict('records')
+        elif config_obj.update_missing == "zero":
+            df[[config_obj.rrprice_column, config_obj.microwholeprice_column,
+                config_obj.mediumwholeprice_column, config_obj.maxwholeprice_column]] = df[[
+                config_obj.rrprice_column, config_obj.microwholeprice_column,
+                config_obj.mediumwholeprice_column, config_obj.maxwholeprice_column]].fillna(0)
+        elif config_obj.update_missing == "null":
+            pass  # Оставляем null
+        elif config_obj.update_missing == "ignore":
+            ignored_rows = df[df[[config_obj.rrprice_column, config_obj.microwholeprice_column,
+                                  config_obj.mediumwholeprice_column, config_obj.maxwholeprice_column]].isna().any(axis=1)].to_dict('records')
+
         preview = df.head(30).to_dict(orient="records")
-        
+
         return {
             "status": "success",
             "columns": list(df.columns),
-            "preview": preview
+            "preview": preview,
+            "unknown_units": unknown_units,
+            "ignored_rows": ignored_rows
         }
     except HTTPException as e:
         logger.error(f"HTTP error in upload_price: {e.detail}")
