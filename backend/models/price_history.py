@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, Float, DateTime, ForeignKey
-from .user import Base
+from backend.database import Base
 from datetime import datetime
 
 class PriceHistory(Base):

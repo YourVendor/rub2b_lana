@@ -20,6 +20,10 @@ const Moderator: React.FC = () => {
     ean13_column: "",
     name_column: "",
     unit_column: "",
+    rrprice_column: "", // Новое
+    microwholeprice_column: "", // Новое
+    mediumwholeprice_column: "", // Новое
+    maxwholeprice_column: "", // Новое
     price_column: "",
     stock_column: "",
     skip_first_row: true,
@@ -81,7 +85,7 @@ const Moderator: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("config", JSON.stringify(config));
+      formData.append("config", JSON.stringify(config)); // config уже включает новые поля
       const response = await fetch("http://127.0.0.1:8000/moderator/upload-price", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -92,8 +96,8 @@ const Moderator: React.FC = () => {
         throw new Error(errorData.detail || "Ошибка загрузки");
       }
       const data = await response.json();
-      setPreview(data.preview || []); // Добавили fallback на пустой массив
-      setColumns(data.columns || []); // Используем columns из ответа
+      setPreview(data.preview || []);
+      setColumns(data.columns || []);
       setError(null);
       loadItems();
     } catch (err: any) {
@@ -172,11 +176,39 @@ const Moderator: React.FC = () => {
         />
       </div>
       <div>
-        <label>Колонка цены:</label>
+        <label>Колонка розничной цены:</label>
         <input
           type="text"
-          value={config.price_column}
-          onChange={(e) => setConfig({ ...config, price_column: e.target.value })}
+          value={config.rrprice_column}
+          onChange={(e) => setConfig({ ...config, rrprice_column: e.target.value })}
+          placeholder="Розничная цена"
+        />
+      </div>
+      <div>
+        <label>Колонка микрооптовой цены:</label>
+        <input
+          type="text"
+          value={config.microwholeprice_column}
+          onChange={(e) => setConfig({ ...config, microwholeprice_column: e.target.value })}
+          placeholder="Микрооптовая цена"
+        />
+      </div>
+      <div>
+        <label>Колонка среднеоптовой цены:</label>
+        <input
+          type="text"
+          value={config.mediumwholeprice_column}
+          onChange={(e) => setConfig({ ...config, mediumwholeprice_column: e.target.value })}
+          placeholder="Среднеоптовая цена"
+        />
+      </div>
+      <div>
+        <label>Колонка макрооптовой цены:</label>
+        <input
+          type="text"
+          value={config.maxwholeprice_column}
+          onChange={(e) => setConfig({ ...config, maxwholeprice_column: e.target.value })}
+          placeholder="Макрооптовая цена"
         />
       </div>
       <div>

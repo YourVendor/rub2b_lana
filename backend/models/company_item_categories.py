@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey
-from .user import Base
+from backend.database import Base
 
 class CompanyItemCategory(Base):
     __tablename__ = "company_item_categories"

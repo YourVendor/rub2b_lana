@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean
-from .user import Base
+from backend.database import Base
 
 class Query(Base):
     __tablename__ = "queries"
