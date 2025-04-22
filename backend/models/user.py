@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from backend.database import Base  # Исправлено
 
 class User(Base):
@@ -7,3 +8,6 @@ class User(Base):
     login = Column(String(50), unique=True, index=True)
     password = Column(String(50))
     role = Column(String(20), default="retail_client")  # admin, moderator, employee, retail_client
+
+    employee_companies = relationship("EmployeeCompany", back_populates="user")
+    queries = relationship("Query", back_populates="user")
