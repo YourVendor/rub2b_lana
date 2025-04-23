@@ -1,28 +1,34 @@
-import React from "react";
+// frontend/src/components/Dashboard.tsx
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode"; // Исправлено
 
 interface TokenPayload {
-  sub: string;
   role: string;
 }
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  let role = "";
-  if (token) {
-    const decoded: TokenPayload = jwtDecode(token);
-    role = decoded.role;
-  }
+  const [role, setRole] = useState<string>("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded: TokenPayload = jwtDecode(token);
+      setRole(decoded.role);
+    }
+  }, []);
 
   return (
     <div>
       <h1>Дашборд</h1>
+      <button onClick={() => navigate("/admin")}>Админ</button>
+      <button onClick={() => navigate("/moderator")}>Модератор</button>
       <button onClick={() => navigate("/goods")}>Товары</button>
-      {role === "admin" && <button onClick={() => navigate("/admin")}>Админка</button>}
-      {(role === "admin" || role === "moderator") && (
-        <button onClick={() => navigate("/moderator")}>Модератор</button>
+      {(role === "moderator" || role === "admin") && (
+        <button onClick={() => navigate("/moderator-item-to-goods")}>
+          Сравнение позиций с витриной
+        </button>
       )}
     </div>
   );

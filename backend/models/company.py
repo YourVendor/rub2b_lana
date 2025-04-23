@@ -14,3 +14,4 @@ class Company(Base):
 
     items = relationship("CompanyItem", back_populates="company")
     employee_companies = relationship("EmployeeCompany", back_populates="company")
+    prices = relationship("Prices", back_populates="company")

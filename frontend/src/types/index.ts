@@ -17,3 +17,12 @@ export interface CompanyItem {
     name: string;
     inn: string;
   }
+
+  export interface Goods {
+    ean13: string;
+    name: string;
+    unit_id: number;
+    description?: string;
+    category?: string;
+    stock: number;
+  }

@@ -41,7 +41,8 @@ const Moderator: React.FC = () => {
   const [zeroPriceRows, setZeroPriceRows] = useState<any[]>([]);
   const [newItems, setNewItems] = useState<any[]>([]);
   const [unitMappings, setUnitMappings] = useState<{ [key: string]: string }>({});
-  const [ean13Decisions, setEan13Decisions] = useState<{ [key: string]: string }>({});
+  const [ean13Decisions] = useState<{ [key: string]: string }>({});
+  //const [ean13Decisions, setEan13Decisions] = useState<{ [key: string]: string }>({});
   const [confirmedItems, setConfirmedItems] = useState<any[]>([]);
   const [units, setUnits] = useState<{ id: number; name: string }[]>([]);
 
@@ -76,7 +77,7 @@ const Moderator: React.FC = () => {
     } catch (err: any) {
       setError(err.message);
     }
-  }, []);
+  }, [config.company_id]);
 
   const loadUnits = useCallback(async () => {
     const token = localStorage.getItem("token");
