@@ -671,17 +671,26 @@ const Moderator: React.FC = () => {
               )}
               {visibleColumns.unit_id && (
                 <td>
-                  <input
-                    value={item.unit_id || ""}
-                    onChange={(e) =>
-                      setItems(
-                        items.map((i) =>
-                          i.id === item.id ? { ...i, unit_id: parseInt(e.target.value) || undefined } : i
-                        )
+                <select
+                  value={item.unit_id || ""}
+                  onChange={(e) =>
+                    setItems(
+                      items.map((i) =>
+                        i.id === item.id
+                          ? { ...i, unit_id: parseInt(e.target.value) || undefined }
+                          : i
                       )
-                    }
-                  />
-                </td>
+                    )
+                  }
+                >
+                  <option value="">-</option>
+                  {units.map((unit) => (
+                    <option key={unit.id} value={unit.id}>
+                      {unit.name}
+                    </option>
+                  ))}
+                </select>
+              </td>
               )}
               {visibleColumns.rrprice && (
                 <td>

@@ -8,6 +8,7 @@ const ModeratorItemToGoods: React.FC = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [items, setItems] = useState<CompanyItem[]>([]);
   const [goods, setGoods] = useState<Goods[]>([]);
+  const [units, setUnits] = useState<{ id: number; name: string }[]>([]);
   const [ignoreItems, setIgnoreItems] = useState<Set<number>>(new Set());
   const [addNewItems, setAddNewItems] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,14 +72,35 @@ const ModeratorItemToGoods: React.FC = () => {
     }
   }, []);
 
+  const loadUnits = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Токен отсутствует");
+      return;
+    }
+    try {
+      const response = await fetch("http://127.0.0.1:8000/units", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("Не удалось загрузить единицы измерения");
+      const data = await response.json();
+      console.log("loadUnits: data", data);
+      setUnits(data);
+    } catch (err: any) {
+      setError(err.message);
+    }
+  }, []);
+
   useEffect(() => {
     console.log("useEffect: companies", companies); // Добавлено
     console.log("useEffect: companyId", companyId); // Добавлено
     console.log("useEffect: items", items); // Добавлено
     console.log("useEffect: goods", goods); // Добавлено
+    console.log("useEffect: units", units);
     console.log("useEffect: token", localStorage.getItem("token")); // Добавлено
     loadCompanies();
     loadGoods();
+    loadUnits();
   }, [loadCompanies, loadGoods]);
 
   useEffect(() => {
@@ -182,6 +204,7 @@ const ModeratorItemToGoods: React.FC = () => {
             const unitDiff = good && item.unit_id !== good.unit_id;
             const nameDiff = good && item.name !== good.name;
             const stockDiff = good && item.stock !== good.stock;
+            const unitName = units.find((u) => u.id === good?.unit_id)?.name || "-"; // Добавлено
             return (
               <tr key={item.id}>
                 <td>
@@ -203,7 +226,7 @@ const ModeratorItemToGoods: React.FC = () => {
                 <td>{item.ean13 || "-"}</td>
                 <td>{item.name}</td>
                 <td style={{ backgroundColor: unitDiff ? "yellow" : "inherit" }}>
-                  {item.unit_id}
+                  {units.find((u) => u.id === item.unit_id)?.name || item.unit_id || "-"}
                 </td>
                 <td>{item.rrprice}</td>
                 <td>{item.microwholeprice}</td>
@@ -214,7 +237,7 @@ const ModeratorItemToGoods: React.FC = () => {
                   {isNew ? "новая" : good?.name}
                 </td>
                 <td style={{ backgroundColor: unitDiff ? "yellow" : "inherit" }}>
-                  {isNew ? "новая" : good?.unit_id}
+                  {isNew ? "новая" : unitName}
                 </td>
                 <td style={{ backgroundColor: stockDiff ? "lightblue" : "inherit" }}>
                   {isNew ? "новая" : good?.stock}
