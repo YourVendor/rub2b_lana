@@ -451,51 +451,72 @@ async def update_main_catalog(data: dict, db: Session = Depends(get_db), user: U
                 ignored += 1
                 continue
 
+            # Проверка unit_id
+            unit = db.query(Unit).filter(Unit.id == item["unit_id"]).first()
+            if not unit:
+                logger.warning(f"Unit with id {item['unit_id']} not found for item {item['ean13']}")
+                continue
+
+            stock = item["stock"]
+            price_types = ["rrprice", "microwholeprice", "mediumwholeprice", "maxwholeprice"]
+            prices = {pt: item.get(pt) for pt in price_types if item.get(pt)}
+            
+            # Если unit.name = "тыс.шт", меняем unit_id на "шт." и умножаем stock и цены на 1000
+            if unit.name == "тыс.шт":
+                logger.info(f"Converting 'тыс.шт' to 'шт.' for item {item['ean13']}")
+                sht_unit = db.query(Unit).filter(Unit.name == "шт.").first()
+                if not sht_unit:
+                    logger.error("Unit 'шт.' not found in database")
+                    raise HTTPException(status_code=400, detail="Единица измерения 'шт.' не найдена в базе")
+                item["unit_id"] = sht_unit.id
+                stock *= 1000
+                prices = {pt: round(price / 1000, 2) for pt, price in prices.items()}
+                logger.debug(f"Converted item {item['ean13']}: stock={stock}, prices={prices}")
+
             good = db.query(Goods).filter(Goods.ean13 == item["ean13"]).first()
 
             if good:
                 good.name = item["name"]
                 good.unit_id = item["unit_id"]
-                good.stock = item["stock"]
+                good.stock = stock
                 updated += 1
             elif add_new_items:
                 new_good = Goods(
                     ean13=item["ean13"],
                     name=item["name"],
                     unit_id=item["unit_id"],
-                    stock=item["stock"]
+                    stock=stock
                 )
                 db.add(new_good)
                 added += 1
                 good = new_good
 
-            if good:
-                price_types = ["rrprice", "microwholeprice", "mediumwholeprice", "maxwholeprice"]
-                for price_type in price_types:
-                    if item.get(price_type):
-                        price = db.query(Prices).filter(
-                            Prices.goods_ean13 == item["ean13"],
-                            Prices.company_id == company_id,
-                            Prices.price_type == price_type
-                        ).first()
-                        if price and price.price != item[price_type]:
-                            db.add(PriceHistory(
-                                price_id=price.id,
-                                price_type=price_type,
-                                price=price.price,
-                                recorded_at=datetime.utcnow()
-                            ))
-                            price.price = item[price_type]
-                        elif not price:
-                            new_price = Prices(
-                                goods_ean13=item["ean13"],
-                                company_id=company_id,
-                                price_type=price_type,
-                                price=item[price_type]
-                            )
-                            db.add(new_price)
+            if good and prices:
+                for price_type, price_value in prices.items():
+                    price = db.query(Prices).filter(
+                        Prices.goods_ean13 == item["ean13"],
+                        Prices.company_id == company_id,
+                        Prices.price_type == price_type
+                    ).first()
+                    if price and price.price != price_value:
+                        db.add(PriceHistory(
+                            price_id=price.id,
+                            price_type=price_type,
+                            price=price.price,
+                            recorded_at=datetime.utcnow()
+                        ))
+                        price.price = price_value
+                    elif not price:
+                        new_price = Prices(
+                            goods_ean13=item["ean13"],
+                            company_id=company_id,
+                            price_type=price_type,
+                            price=price_value
+                        )
+                        db.add(new_price)
 
         db.commit()
+        logger.info(f"Main catalog updated: {updated} updated, {added} added, {ignored} ignored")
         return {"updated": updated, "added": added, "ignored": ignored}
     except Exception as e:
         db.rollback()

@@ -1,4 +1,3 @@
-// frontend/src/App.tsx
 import React, { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
@@ -40,34 +39,32 @@ const App: React.FC = () => {
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <div>
-            <h1>Вход</h1>
-            <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                value={login}
-                onChange={(e) => setLogin(e.target.value)}
-                placeholder="Логин"
-              />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Пароль"
-              />
-              <button type="submit">Войти</button>
-            </form>
-          </div>
-        }
-      />
+      <Route path="/" element={
+        <div>
+          <h1>Вход</h1>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={login}
+              onChange={(e) => setLogin(e.target.value)}
+              placeholder="Логин"
+            />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Пароль"
+            />
+            <button type="submit">Войти</button>
+          </form>
+        </div>
+      } />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/admin" element={<Admin />} />
       <Route path="/moderator" element={<Moderator />} />
       <Route path="/goods" element={<Goods />} />
       <Route path="/moderator-item-to-goods" element={<ModeratorItemToGoods />} />
+      <Route path="*" element={<h1>404: Страница не найдена</h1>} />
     </Routes>
   );
 };

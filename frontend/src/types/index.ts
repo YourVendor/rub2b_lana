@@ -18,6 +18,13 @@ export interface CompanyItem {
     inn: string;
   }
 
+  export interface Price {
+    goods_ean13: string;
+    company_id: number;
+    price_type: string;
+    price: number;
+  }
+
   export interface Goods {
     ean13: string;
     name: string;
@@ -25,4 +32,5 @@ export interface CompanyItem {
     description?: string;
     category?: string;
     stock: number;
+    prices: Price[];
   }
