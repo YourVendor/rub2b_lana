@@ -1,11 +1,201 @@
 import React, { useState, useEffect, useCallback } from "react";
 import * as Papa from "papaparse";
-import { CompanyItem, Company } from "../types";
+import { CompanyItem, Company, Config } from "../types";
+
+// Новый компонент для формы загрузки прайса
+const PriceUploadForm: React.FC<{
+  config: Config;
+  setConfig: React.Dispatch<React.SetStateAction<Config>>;
+  file: File | null;
+  setFile: React.Dispatch<React.SetStateAction<File | null>>;
+  companies: Company[];
+  error: string | null;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+  onPreview: () => void;
+}> = ({ config, setConfig, file, setFile, companies, error, setError, onPreview }) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Загрузка прайса</h2>
+      <input type="file" accept=".xlsx,.xls" onChange={handleFileChange} />
+      <div>
+        <label>Компания для загрузки:</label>
+        <select
+          value={config.company_id}
+          onChange={(e) => setConfig((prev) => ({ ...prev, company_id: parseInt(e.target.value) }))}
+        >
+          {companies.map((company) => (
+            <option key={company.id} value={company.id}>
+              {company.name} ({company.inn})
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label>Колонка идентификатора:</label>
+        <input
+          type="text"
+          value={config.identifier_column}
+          onChange={(e) => setConfig((prev) => ({ ...prev, identifier_column: e.target.value }))}
+        />
+      </div>
+      <div>
+        <label>Колонка EAN-13:</label>
+        <input
+          type="text"
+          value={config.ean13_column}
+          onChange={(e) => setConfig((prev) => ({ ...prev, ean13_column: e.target.value }))}
+        />
+      </div>
+      <div>
+        <label>Колонка наименования:</label>
+        <input
+          type="text"
+          value={config.name_column}
+          onChange={(e) => setConfig((prev) => ({ ...prev, name_column: e.target.value }))}
+        />
+      </div>
+      <div>
+        <label>Колонка единицы измерения:</label>
+        <input
+          type="text"
+          value={config.unit_column}
+          onChange={(e) => setConfig((prev) => ({ ...prev, unit_column: e.target.value }))}
+        />
+      </div>
+      <div>
+        <label>Колонка розничной цены:</label>
+        <input
+          type="text"
+          value={config.rrprice_column}
+          onChange={(e) => setConfig((prev) => ({ ...prev, rrprice_column: e.target.value }))}
+          placeholder="Напр., Розничная цена"
+        />
+      </div>
+      <div>
+        <label>Колонка микрооптовой цены:</label>
+        <input
+          type="text"
+          value={config.microwholeprice_column}
+          onChange={(e) => setConfig((prev) => ({ ...prev, microwholeprice_column: e.target.value }))}
+          placeholder="Напр., Микрооптовая цена"
+        />
+      </div>
+      <div>
+        <label>Колонка среднеоптовой цены:</label>
+        <input
+          type="text"
+          value={config.mediumwholeprice_column}
+          onChange={(e) => setConfig((prev) => ({ ...prev, mediumwholeprice_column: e.target.value }))}
+          placeholder="Напр., Среднеоптовая цена"
+        />
+      </div>
+      <div>
+        <label>Колонка макрооптовой цены:</label>
+        <input
+          type="text"
+          value={config.maxwholeprice_column}
+          onChange={(e) => setConfig((prev) => ({ ...prev, maxwholeprice_column: e.target.value }))}
+          placeholder="Напр., Макрооптовая цена"
+        />
+      </div>
+      <div>
+        <label>Колонка остатка:</label>
+        <input
+          type="text"
+          value={config.stock_column}
+          onChange={(e) => setConfig((prev) => ({ ...prev, stock_column: e.target.value }))}
+        />
+      </div>
+      <div>
+        <label>
+          <input
+            type="checkbox"
+            checked={config.skip_first_row}
+            onChange={(e) => setConfig((prev) => ({ ...prev, skip_first_row: e.target.checked }))}
+          />
+          Пропустить первую строку
+        </label>
+      </div>
+      <div>
+        <label>Обновление отсутствующих позиций:</label>
+        <select
+          value={config.update_missing}
+          onChange={(e) => setConfig((prev) => ({ ...prev, update_missing: e.target.value }))}
+        >
+          <option value="zero">Обнулить остатки</option>
+          <option value="null">Оставить пустым</option>
+          <option value="ignore">Игнорировать</option>
+        </select>
+      </div>
+      <div>
+        <label>
+          <input
+            type="checkbox"
+            checked={config.update_name}
+            onChange={(e) => setConfig((prev) => ({ ...prev, update_name: e.target.checked }))}
+          />
+          Обновлять наименование
+        </label>
+      </div>
+      <button onClick={onPreview}>Загрузить и показать превью</button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+    </div>
+  );
+};
+
+interface PreviewItem {
+  [key: string]: string | number | null;
+}
+
+interface Unit {
+  id: number;
+  name: string;
+}
+
+interface DuplicateItem {
+  identifier: string;
+  name: string;
+  rrprice: number;
+  microwholeprice: number;
+  mediumwholeprice: number;
+  maxwholeprice: number;
+  stock: number;
+  selected?: boolean;
+}
+
+interface NewItem {
+  identifier: string;
+  name: string;
+  ean13: string | null;
+  unit: string;
+  rrprice: number;
+  microwholeprice: number;
+  mediumwholeprice: number;
+  maxwholeprice: number;
+  stock: number;
+}
+
+interface ZeroPriceRow {
+  identifier: string;
+  name: string;
+  rrprice: number | null;
+  microwholeprice: number | null;
+  mediumwholeprice: number | null;
+  maxwholeprice: number | null;
+  zero_price_action?: string;
+}
 
 const Moderator: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<any[]>([]);
-  const [config, setConfig] = useState({
+  const [preview, setPreview] = useState<PreviewItem[]>([]);
+  // Изменение: добавлена типизация Config
+  const [config, setConfig] = useState<Config>({
     company_id: 0,
     identifier_column: "",
     ean13_column: "",
@@ -36,16 +226,16 @@ const Moderator: React.FC = () => {
   });
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const [duplicates, setDuplicates] = useState<any[]>([]);
-  const [unknownUnits, setUnknownUnits] = useState<any[]>([]);
-  const [zeroPriceRows, setZeroPriceRows] = useState<any[]>([]);
-  const [newItems, setNewItems] = useState<any[]>([]);
+  const [duplicates, setDuplicates] = useState<DuplicateItem[]>([]);
+  const [unknownUnits, setUnknownUnits] = useState<string[]>([]);
+  const [zeroPriceRows, setZeroPriceRows] = useState<ZeroPriceRow[]>([]);
+  const [newItems, setNewItems] = useState<NewItem[]>([]);
   const [unitMappings, setUnitMappings] = useState<{ [key: string]: string }>({});
   const [ean13Decisions] = useState<{ [key: string]: string }>({});
-  //const [ean13Decisions, setEan13Decisions] = useState<{ [key: string]: string }>({});
-  const [confirmedItems, setConfirmedItems] = useState<any[]>([]);
-  const [units, setUnits] = useState<{ id: number; name: string }[]>([]);
+  const [confirmedItems, setConfirmedItems] = useState<NewItem[]>([]);
+  const [units, setUnits] = useState<Unit[]>([]);
 
+  // Изменение: убрана setConfig из loadItems, перенесена в loadCompanies
   const loadItems = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token || !config.company_id) return;
@@ -54,13 +244,14 @@ const Moderator: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error("Не удалось загрузить позиции");
-      const data = await response.json();
+      const data: CompanyItem[] = await response.json();
       setItems(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Неизвестная ошибка");
     }
   }, [config.company_id]);
 
+  // Изменение: добавлена логика setConfig из loadItems
   const loadCompanies = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -69,15 +260,15 @@ const Moderator: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error("Не удалось загрузить компании");
-      const data = await response.json();
+      const data: Company[] = await response.json();
       setCompanies(data);
       if (data.length > 0 && config.company_id === 0) {
         setConfig((prev) => ({ ...prev, company_id: data[0].id }));
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Неизвестная ошибка");
     }
-  }, [config.company_id]);
+  }, [config.company_id, setConfig]);
 
   const loadUnits = useCallback(async () => {
     const token = localStorage.getItem("token");
@@ -87,10 +278,10 @@ const Moderator: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error("Не удалось загрузить единицы измерения");
-      const data = await response.json();
+      const data: Unit[] = await response.json();
       setUnits(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Неизвестная ошибка");
     }
   }, []);
 
@@ -104,12 +295,6 @@ const Moderator: React.FC = () => {
       loadItems();
     }
   }, [config.company_id, loadItems]);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
-  };
 
   const handlePreview = async () => {
     if (!file) {
@@ -148,6 +333,7 @@ const Moderator: React.FC = () => {
         throw new Error(errorData.detail || "Ошибка загрузки");
       }
       const data = await response.json();
+      console.log("Preview data:", data); // Отладка
       setPreview(data.preview || []);
       setColumns(data.columns || []);
       setDuplicates(data.duplicates || []);
@@ -156,8 +342,8 @@ const Moderator: React.FC = () => {
       setNewItems(data.new_items || []);
       setError(null);
       loadItems();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Неизвестная ошибка");
     }
   };
 
@@ -174,13 +360,14 @@ const Moderator: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("config", JSON.stringify({
+      const configData = {
         ...config,
         confirmed_items: confirmedItems,
         ean13_decisions: ean13Decisions,
         unit_mappings: unitMappings,
-        rows: preview
-      }));
+      };
+      console.log("Config size:", JSON.stringify(configData).length); // Отладка размера config
+      formData.append("config", JSON.stringify(configData));
       const response = await fetch("http://127.0.0.1:8000/moderator/confirm-upload", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -201,8 +388,8 @@ const Moderator: React.FC = () => {
         `Обработано отсутствующих: ${data.missing_processed.length}`
       );
       loadItems();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Неизвестная ошибка");
     }
   };
 
@@ -223,155 +410,29 @@ const Moderator: React.FC = () => {
       });
       if (!response.ok) throw new Error("Ошибка обновления");
       loadItems();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Неизвестная ошибка");
     }
   };
 
   const itemsPerPage = 50;
   const visibleItems = items.slice(0, page * itemsPerPage);
+  const visiblePreview = preview.slice(0, 30);
 
   return (
     <div>
       <h1>Модератор</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <h2>Загрузка прайса</h2>
-      <input type="file" accept=".xlsx,.xls" onChange={handleFileChange} />
-      <div>
-        <label>Компания для загрузки:</label>
-        <select
-          value={config.company_id}
-          onChange={(e) => setConfig({ ...config, company_id: parseInt(e.target.value) })}
-        >
-          {companies.map((company) => (
-            <option key={company.id} value={company.id}>
-              {company.name} ({company.inn})
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label>Выберите компанию для отображения позиций:</label>
-        <select
-          value={config.company_id}
-          onChange={(e) => setConfig({ ...config, company_id: parseInt(e.target.value) })}
-        >
-          {companies.map((company) => (
-            <option key={company.id} value={company.id}>
-              {company.name} ({company.inn})
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label>Колонка идентификатора:</label>
-        <input
-          type="text"
-          value={config.identifier_column}
-          onChange={(e) => setConfig({ ...config, identifier_column: e.target.value })}
-        />
-      </div>
-      <div>
-        <label>Колонка EAN-13:</label>
-        <input
-          type="text"
-          value={config.ean13_column}
-          onChange={(e) => setConfig({ ...config, ean13_column: e.target.value })}
-        />
-      </div>
-      <div>
-        <label>Колонка наименования:</label>
-        <input
-          type="text"
-          value={config.name_column}
-          onChange={(e) => setConfig({ ...config, name_column: e.target.value })}
-        />
-      </div>
-      <div>
-        <label>Колонка единицы измерения:</label>
-        <input
-          type="text"
-          value={config.unit_column}
-          onChange={(e) => setConfig({ ...config, unit_column: e.target.value })}
-        />
-      </div>
-      <div>
-        <label>Колонка розничной цены:</label>
-        <input
-          type="text"
-          value={config.rrprice_column}
-          onChange={(e) => setConfig({ ...config, rrprice_column: e.target.value })}
-          placeholder="Напр., Розничная цена"
-        />
-      </div>
-      <div>
-        <label>Колонка микрооптовой цены:</label>
-        <input
-          type="text"
-          value={config.microwholeprice_column}
-          onChange={(e) => setConfig({ ...config, microwholeprice_column: e.target.value })}
-          placeholder="Напр., Микрооптовая цена"
-        />
-      </div>
-      <div>
-        <label>Колонка среднеоптовой цены:</label>
-        <input
-          type="text"
-          value={config.mediumwholeprice_column}
-          onChange={(e) => setConfig({ ...config, mediumwholeprice_column: e.target.value })}
-          placeholder="Напр., Среднеоптовая цена"
-        />
-      </div>
-      <div>
-        <label>Колонка макрооптовой цены:</label>
-        <input
-          type="text"
-          value={config.maxwholeprice_column}
-          onChange={(e) => setConfig({ ...config, maxwholeprice_column: e.target.value })}
-          placeholder="Напр., Макрооптовая цена"
-        />
-      </div>
-      <div>
-        <label>Колонка остатка:</label>
-        <input
-          type="text"
-          value={config.stock_column}
-          onChange={(e) => setConfig({ ...config, stock_column: e.target.value })}
-        />
-      </div>
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={config.skip_first_row}
-            onChange={(e) => setConfig({ ...config, skip_first_row: e.target.checked })}
-          />
-          Пропустить первую строку
-        </label>
-      </div>
-      <div>
-        <label>Обновление отсутствующих позиций:</label>
-        <select
-          value={config.update_missing}
-          onChange={(e) => setConfig({ ...config, update_missing: e.target.value })}
-        >
-          <option value="zero">Обнулить остатки</option>
-          <option value="null">Оставить пустым</option>
-          <option value="ignore">Игнорировать</option>
-        </select>
-      </div>
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={config.update_name}
-            onChange={(e) => setConfig({ ...config, update_name: e.target.checked })}
-          />
-          Обновлять наименование
-        </label>
-      </div>
-      <button onClick={handlePreview}>Загрузить и показать превью</button>
-
+      {/* Изменение: форма загрузки прайса вынесена в PriceUploadForm */}
+      <PriceUploadForm
+        config={config}
+        setConfig={setConfig}
+        file={file}
+        setFile={setFile}
+        companies={companies}
+        error={error}
+        setError={setError}
+        onPreview={handlePreview}
+      />
       {duplicates.length > 0 && (
         <div>
           <h3>Дубликаты идентификаторов</h3>
@@ -415,7 +476,6 @@ const Moderator: React.FC = () => {
           </table>
         </div>
       )}
-
       {unknownUnits.length > 0 && (
         <div>
           <h3>Неизвестные единицы измерения</h3>
@@ -452,7 +512,6 @@ const Moderator: React.FC = () => {
           </table>
         </div>
       )}
-
       {zeroPriceRows.length > 0 && (
         <div>
           <h3>Пустые/нулевые цены</h3>
@@ -496,7 +555,6 @@ const Moderator: React.FC = () => {
           </table>
         </div>
       )}
-
       {newItems.length > 0 && (
         <div>
           <h3>Новые позиции</h3>
@@ -581,10 +639,9 @@ const Moderator: React.FC = () => {
           </button>
         </div>
       )}
-
       {preview.length > 0 && (
         <div>
-          <h3>Превью (30 строк)</h3>
+          <h3>Превью (до 30 строк)</h3>
           <table border={1}>
             <thead>
               <tr>
@@ -594,10 +651,10 @@ const Moderator: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {preview.map((row, index) => (
+              {visiblePreview.map((row, index) => (
                 <tr key={index}>
                   {columns.map((col) => (
-                    <td key={col}>{row[col]}</td>
+                    <td key={col}>{row[col] ?? "-"}</td>
                   ))}
                 </tr>
               ))}
@@ -606,13 +663,12 @@ const Moderator: React.FC = () => {
           <button onClick={handleConfirmUpload}>Применить экспорт</button>
         </div>
       )}
-
       <h2>Позиции компании</h2>
       <div>
         <label>Выберите компанию для отображения позиций:</label>
         <select
           value={config.company_id}
-          onChange={(e) => setConfig({ ...config, company_id: parseInt(e.target.value) })}
+          onChange={(e) => setConfig((prev) => ({ ...prev, company_id: parseInt(e.target.value) }))}
         >
           {companies.map((company) => (
             <option key={company.id} value={company.id}>
@@ -671,26 +727,26 @@ const Moderator: React.FC = () => {
               )}
               {visibleColumns.unit_id && (
                 <td>
-                <select
-                  value={item.unit_id || ""}
-                  onChange={(e) =>
-                    setItems(
-                      items.map((i) =>
-                        i.id === item.id
-                          ? { ...i, unit_id: parseInt(e.target.value) || undefined }
-                          : i
+                  <select
+                    value={item.unit_id || ""}
+                    onChange={(e) =>
+                      setItems(
+                        items.map((i) =>
+                          i.id === item.id
+                            ? { ...i, unit_id: parseInt(e.target.value) || undefined }
+                            : i
+                        )
                       )
-                    )
-                  }
-                >
-                  <option value="">-</option>
-                  {units.map((unit) => (
-                    <option key={unit.id} value={unit.id}>
-                      {unit.name}
-                    </option>
-                  ))}
-                </select>
-              </td>
+                    }
+                  >
+                    <option value="">-</option>
+                    {units.map((unit) => (
+                      <option key={unit.id} value={unit.id}>
+                        {unit.name}
+                      </option>
+                    ))}
+                  </select>
+                </td>
               )}
               {visibleColumns.rrprice && (
                 <td>

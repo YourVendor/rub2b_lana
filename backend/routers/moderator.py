@@ -89,7 +89,7 @@ async def upload_price(
             ignored_rows = df[df[[config_obj.rrprice_column, config_obj.microwholeprice_column,
                                   config_obj.mediumwholeprice_column, config_obj.maxwholeprice_column]].isna().any(axis=1)].to_dict(orient='records')
 
-        preview = df.to_dict(orient="records")
+        preview = df.head(30).to_dict(orient="records")
         logger.info(f"Preview rows: {len(preview)}")
 
         return {
@@ -140,8 +140,8 @@ async def confirm_upload(
         df[config_obj.identifier_column] = df[config_obj.identifier_column].astype(str)
         logger.info(f"Excel rows: {len(df)}, columns: {list(df.columns)}")
 
-        if len(df) > 10000:
-            raise HTTPException(status_code=400, detail="Слишком много позиций, максимум 10,000")
+        if len(df) > 20000:
+            raise HTTPException(status_code=400, detail="Слишком много позиций, максимум 20,000")
 
         units_in_db = {unit.name: unit.id for unit in db.query(Unit).all()}
         logger.info(f"Units in DB: {units_in_db}")
@@ -202,7 +202,7 @@ async def confirm_upload(
                 continue
             unit_id = units_in_db[mapped_unit]
 
-            if ean13 is not None:
+            if ean13 is not None and str(ean13).strip():
                 ean13_str = str(ean13).strip()
                 if not (len(ean13_str) == 13 and ean13_str.isdigit()):
                     non_uploaded_items.append({
@@ -211,6 +211,8 @@ async def confirm_upload(
                     logger.info(f"Rejected: {identifier} - Невалидный EAN-13: {ean13}")
                     continue
                 ean13 = ean13_str
+            else:
+                ean13 = None
 
             existing_item = db.query(CompanyItem).filter(
                 and_(CompanyItem.company_id == config_obj.company_id, CompanyItem.identifier == identifier)
@@ -227,6 +229,7 @@ async def confirm_upload(
                 existing_item.mediumwholeprice = prices["mediumwholeprice"]
                 existing_item.maxwholeprice = prices["maxwholeprice"]
                 existing_item.stock = stock
+                existing_item.unit_id = unit_id
                 processed_rows.append({"identifier": identifier, "action": "updated"})
                 logger.info(f"Updated: {identifier}")
             else:

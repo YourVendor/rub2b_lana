@@ -1,9 +1,32 @@
 D:\VSCODE\rub2b_lana\rub2b_lana
 D:\VSCODE\rub2b_lana\rub2b_lana\__pycache__
+D:\VSCODE\rub2b_lana\rub2b_lana\__pycache__\main.cpython-39.pyc
 D:\VSCODE\rub2b_lana\rub2b_lana\.pytest_cache
 D:\VSCODE\rub2b_lana\rub2b_lana\backend
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\__pycache__
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\.pytest_cache
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\__pycache__
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\__pycache__
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_18_0045_02a0c57328f3_initial_database_setup.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_18_1308_aadbb94e6051_add_missing_tables_including_users.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_22_2015_6ed7e3ba8c81_sync_company_items_schema.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_22_2038_54152b5df198_add_name_author_active_to_queries.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_0103_f57712d11ccd_add_prices_table_and_update_price_.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_0208_24f06da2a916_add_missing_columns_to_goods.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_0214_2bb3112111ab_check_all.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_0227_91995699b44e_fix_price_history_and_other_tables.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_0309_d5af245cf35f_check2.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_0321_203cf26e7c40_check4.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_0338_1571ae2ad890_restore_price_in_price_history.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_0356_f82fe6f1b91c_final_sync.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_0444_a8aa46f5ee09_increase_user_password_length_to_255.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_1410_88e6ed2b0908_add_units_table.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\__init__.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\env.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\README
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\script.py.mako
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\__pycache__
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\__init__.py
@@ -15,15 +38,19 @@ D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\employee_company.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\goods_categories.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\goods.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\price_history.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\prices.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\query.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\stock_history.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\unit.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\user.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\warehouse.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\__pycache__
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\admin.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\auth.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\goods.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\moderator.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\units.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\schemas
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\schemas\goods.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\schemas\query.py
@@ -35,10 +62,13 @@ D:\VSCODE\rub2b_lana\rub2b_lana\backend\tests\conftest.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\tests\test_admin.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\tests\test_auth.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\tests\test_moderator.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\tmp
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\__init__.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\database.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\main.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\pytest.ini
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\requirements.txt
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\utils.py
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\node_modules
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\public
@@ -54,7 +84,10 @@ D:\VSCODE\rub2b_lana\rub2b_lana\frontend\src\components\Dashboard.tsx
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\src\pages
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\src\pages\Admin.tsx
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\src\pages\Goods.tsx
+D:\VSCODE\rub2b_lana\rub2b_lana\frontend\src\pages\Moderator_item_to_goods.tsx
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\src\pages\Moderator.tsx
+D:\VSCODE\rub2b_lana\rub2b_lana\frontend\src\types
+D:\VSCODE\rub2b_lana\rub2b_lana\frontend\src\types\index.ts
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\src\App.tsx
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\src\index.css
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\src\index.tsx
@@ -63,230 +96,737 @@ D:\VSCODE\rub2b_lana\rub2b_lana\frontend\tests\Admin.test.tsx
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\tests\Dashboard.test.tsx
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\tests\DataTable.test.tsx
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\tests\QueryForm.test.tsx
+D:\VSCODE\rub2b_lana\rub2b_lana\frontend\.eslintrc.json
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\.gitignore
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\craco.config.js
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\package-lock.json
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\package.json
+D:\VSCODE\rub2b_lana\rub2b_lana\frontend\package.json.bak
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\README.md
 D:\VSCODE\rub2b_lana\rub2b_lana\frontend\tsconfig.json
 D:\VSCODE\rub2b_lana\rub2b_lana\venv
 D:\VSCODE\rub2b_lana\rub2b_lana\.gitignore
+D:\VSCODE\rub2b_lana\rub2b_lana\alembic.ini
+D:\VSCODE\rub2b_lana\rub2b_lana\requirements.txt
+D:\VSCODE\rub2b_lana\rub2b_lana\rub2b_backup_20250423_3.sql
+D:\VSCODE\rub2b_lana\rub2b_lana\rub2b_backup_20250423.sql
 D:\VSCODE\rub2b_lana\rub2b_lana\structure.txt
-
-Перепиши для себя структуру с комментариями, чтобы тебе было удобно в ней ориентироваться.
 
 Структура проекта rub2b_lana
 
 Корень проекта: D:\VSCODE\rub2b_lana\rub2b_lana
 
-Описание:
+Описание проекта
 
-Проект — B2B-платформа для управления прайсами и товарами. Backend на FastAPI (Python) с PostgreSQL, frontend на React (TypeScript). Используется виртуальное окружение (venv), Git-игнор (.gitignore), миграции через Alembic. Основной функционал: авторизация, загрузка/редактирование прайсов (/moderator), админские SQL-запросы (/admin), товары (/goods, пока не реализовано).
+B2B-платформа для управления прайсами и товарами.
 
-Кэш:
 
-    __pycache__/: Скомпилированные Python-файлы, создаются автоматически.
-    .pytest_cache/: Кэш pytest для тестов, можно удалять.
+
+
+
+Backend: FastAPI (Python) + PostgreSQL (база rub2b, пользователь germush:Gremushka27112007). Использует SQLAlchemy для моделей, Alembic для миграций, Pydantic для валидации. Основной функционал: авторизация (/login), загрузка/редактирование прайсов (/moderator), админские SQL-запросы (/admin).
+
+
+
+Frontend: React (TypeScript) + react-router-dom для роутинга, fetch для API, jwt-decode для токенов. UI для логина, дашборда, модератора и админа. Настроен через craco для кастомизации Webpack.
+
+
+
+Окружение: Виртуальное окружение Python (venv), зависимости в requirements.txt (backend) и package.json (frontend). Git-игнор для временных файлов.
+
+
+
+Текущий прогресс: Загрузка прайсов в Moderator.tsx работает (Excel, до 44 строк), обрабатывает company_items, возвращает файл ошибок. Папка tmp добавлена (вероятно, для временных файлов на backend'е).
+
+
+
+Следующий шаг: Реализация /goods (UI в Goods.tsx, API в routers/goods.py).
+
+Кэш и временные файлы
+
+
+
+
+
+__pycache__/: Скомпилированные Python-файлы. Автоматически создаются, можно игнорировать.
+
+
+
+.pytest_cache/: Кэш pytest для тестов. Можно удалять, не влияет на работу.
 
 1. Корневые файлы и папки
 
-    .gitignore
-    Описание: Игнорирует временные файлы (__pycache__, node_modules, venv, *.xlsx), чтобы не замусоривать Git.
-    Назначение: Контроль версий.
-    alembic.ini
-    Описание: Конфигурация Alembic для миграций базы данных (указывает URL PostgreSQL, postgresql://germush:Gremushka27112007@localhost/rub2b).
-    Назначение: Управление миграциями.
-    requirements.txt
-    Описание: Зависимости backend (fastapi, sqlalchemy, pandas, psycopg2-binary, pytest, etc.).
-    Назначение: Установка окружения (pip install -r requirements.txt).
-    structure.txt
-    Описание: Пользовательский файл со списком файлов/папок проекта.
-    Назначение: Документация/заметки.
-    backend/
-    Описание: Серверная часть (FastAPI, PostgreSQL, Alembic).
-    Назначение: Логика API, база данных, тесты.
-    frontend/
-    Описание: Клиентская часть (React, TypeScript).
-    Назначение: UI, взаимодействие с API.
-    venv/
-    Описание: Виртуальное окружение Python с зависимостями backend.
-    Назначение: Изоляция зависимостей (Scripts/activate для запуска).
+
+
+
+
+.gitignore
+Игнорирует временные файлы (__pycache__, node_modules, venv, *.xlsx, tmp/).
+Назначение: Контроль версий в Git, исключение мусора из репозитория.
+
+
+
+alembic.ini
+Конфигурация Alembic для миграций базы данных. Указывает URL PostgreSQL: postgresql://germush:Gremushka27112007@localhost/rub2b.
+Назначение: Управление миграциями схемы базы (alembic upgrade head).
+
+
+
+requirements.txt
+Зависимости backend: fastapi, sqlalchemy, pandas, psycopg2-binary, pytest, openpyxl и др.
+Назначение: Установка окружения (pip install -r requirements.txt).
+
+
+
+structure.txt
+Пользовательский файл со списком файлов/папок проекта.
+Назначение: Документация структуры для разработчиков.
+
+
+
+backend/
+Серверная часть (FastAPI, PostgreSQL, Alembic).
+Назначение: API, база данных, тесты, миграции.
+
+
+
+frontend/
+Клиентская часть (React, TypeScript).
+Назначение: UI, взаимодействие с API через fetch.
+
+
+
+venv/
+Виртуальное окружение Python с зависимостями backend.
+Назначение: Изоляция зависимостей. Активация: venv\Scripts\activate.
 
 2. Папка backend/
 
 Описание:
+Сервер на FastAPI. Содержит модели SQLAlchemy (models/), роутеры (routers/), Pydantic-схемы (schemas/), миграции (alembic/), тесты (tests/).
 
-Серверная часть на FastAPI. Включает модели SQLAlchemy (models/), роутеры FastAPI (routers/), Pydantic-схемы (schemas/), миграции (alembic/), тесты (tests/). Основной функционал: авторизация (/login), загрузка прайсов (/moderator), админские запросы (/admin). База данных — PostgreSQL (rub2b, пользователь germush).
 
-Подпапки и файлы:
 
-    init.py
-    Описание: Пустой файл, делает backend Python-модулем.
-    Назначение: Импорты.
-    pycache/
-    Описание: Кэш Python для backend.
-    Назначение: Временные данные, создаются интерпретатором.
-    .pytest_cache/
-    Описание: Кэш pytest для тестов backend.
-    Назначение: Временные данные, можно удалять.
-    main.py
-    Описание: Точка входа FastAPI. Создаёт приложение, подключает модели, роутеры, инициализирует таблицы через Base.metadata.create_all. Эндпоинты: /login, /moderator/upload-price, /moderator/confirm-upload, /admin/*.
-    Назначение: Запуск сервера (uvicorn backend.main:app --host 127.0.0.1 --port 8000).
-    database.py
-    Описание: Настройка подключения к PostgreSQL через SQLAlchemy (create_engine, SessionLocal).
-    Назначение: Управление сессиями базы данных.
-    pytest.ini
-    Описание: Конфигурация pytest (пути, маркеры, PYTHONPATH).
-    Назначение: Настройка тестов (pytest backend/tests).
-    requirements.txt
-    Описание: Зависимости backend (копия из корня).
-    Назначение: Установка окружения.
-    alembic/
-    Описание: Миграции базы данных через Alembic.
-    Назначение: Обновление схемы PostgreSQL.
-    Файлы:
-        init.py: Делает alembic модулем.
-        env.py: Настройка Alembic (подключение к базе, запуск миграций).
-        README: Документация Alembic.
-        script.py.mako: Шаблон для новых миграций.
-        versions/: Миграции базы.
-            2025_04_18_0045_02a0c57328f3_initial_database_setup.py: Начальная схема (таблицы users, units, etc.).
-            2025_04_18_1308_aadbb94e6051_add_missing_tables_including_users.py: Добавление таблиц (employee_company, company_items).
-            2025_04_22_2015_6ed7e3ba8c81_sync_company_items_schema.py: Синхронизация company_items (добавлены identifier, ean13).
-            2025_04_22_2038_54152b5df198_add_name_author_active_to_queries.py: Поля name, author, active для queries.
-    models/
-    Описание: Модели SQLAlchemy для таблиц PostgreSQL. Все наследуются от Base (user.py).
-    Назначение: Определение структуры базы данных.
-    Файлы:
-        init.py: Делает models модулем.
-        category.py: Таблица categories (группировки товаров, 3 уровня: id, name, parent_id).
-        company_item_categories.py: Связь company_items ↔ categories (many-to-many, таблица company_item_categories).
-        company_item.py: Таблица company_items (прайс компании: id, company_id, identifier, ean13, name, unit_id, rrprice, microwholeprice, mediumwholeprice, maxwholeprice, stock).
-        company.py: Таблица companies (id, inn, name, legal_name, legal_address, post_address).
-        employee_company.py: Связь users ↔ companies (many-to-many, таблица employee_company: user_id, company_id).
-        goods_categories.py: Связь goods ↔ categories (many-to-many, таблица goods_categories).
-        goods.py: Таблица goods (товары: id, ean13, name, unit_id, description, stock).
-        price_history.py: Таблица price_history (история цен company_items: id, company_item_id, price, recorded_at).
-        query.py: Таблица queries (SQL-запросы админа: id, name, query_text, author, active).
-        stock_history.py: Таблица stock_history (история остатков company_items: id, company_item_id, stock, recorded_at).
-        unit.py: Таблица units (единицы измерения: id, name, например, шт., уп.).
-        user.py: Таблица users (пользователи: id, login, password, role). База для Base.metadata.
-        warehouse.py: Таблица warehouses (склады: id, address, company_id).
-    routers/
-    Описание: Роутеры FastAPI для разделения эндпоинтов.
-    Назначение: Логика API.
-    Файлы:
-        admin.py: Эндпоинты /admin/structure, /admin/query (управление структурой, SQL-запросы).
-        auth.py: Эндпоинт /login (JWT-токены, вход по логину/паролю).
-        goods.py: Эндпоинты /goods/* (управление товарами, пока не реализовано?).
-    schemas/
-    Описание: Pydantic-схемы для валидации данных API.
-    Назначение: Входные/выходные данные эндпоинтов.
-    Файлы:
-        goods.py: Схемы для Goods (валидация ean13, name, stock).
-        query.py: Схемы для Query (валидация query_text, name, author).
-        user.py: Схемы для User (валидация login, password, role).
-    tests/
-    Описание: Тесты для backend (pytest).
-    Назначение: Проверка API.
-    Файлы:
-        init.py: Делает tests модулем.
-        conftest.py: Фикстуры (тестовая база SQLite, клиент FastAPI).
-        test_admin.py: Тесты для /admin/* (структура, запросы).
-        test_auth.py: Тесты для /login, /dashboard.
-        test_moderator.py: Тесты для /moderator/upload-price, /moderator/confirm-upload.
+
+
+Эндпоинты: /login (авторизация), /moderator/upload-price и /confirm-upload (загрузка прайсов), /admin/structure и /admin/query (админские запросы).
+
+
+
+База: PostgreSQL (rub2b). Таблицы: company_items (прайсы), users, units, queries, др.
+
+
+
+Папка tmp/: Вероятно, для временных файлов (например, файлов ошибок от /moderator/confirm-upload).
+
+Подпапки и файлы
+
+
+
+
+
+__init__.py
+Пустой файл, делает backend Python-модулем.
+Назначение: Возможность импортов (from backend import ...).
+
+
+
+__pycache__/
+Кэш Python для backend.
+Назначение: Временные данные, создаются интерпретатором.
+
+
+
+.pytest_cache/
+Кэш pytest для тестов backend.
+Назначение: Временные данные, можно удалять.
+
+
+
+main.py
+Точка входа FastAPI. Создаёт приложение, подключает routers/, инициализирует таблицы через Base.metadata.create_all.
+Назначение: Запуск сервера (uvicorn backend.main:app --host 127.0.0.1 --port 8000).
+
+
+
+database.py
+Настройка подключения к PostgreSQL через SQLAlchemy (create_engine, SessionLocal).
+Назначение: Управление сессиями базы данных для запросов.
+
+
+
+pytest.ini
+Конфигурация pytest: пути, маркеры, PYTHONPATH.
+Назначение: Настройка тестов (pytest backend/tests).
+
+
+
+requirements.txt
+Копия зависимостей из корня.
+Назначение: Установка окружения для backend.
+
+
+
+alembic/
+Миграции базы данных через Alembic.
+Назначение: Обновление схемы PostgreSQL (alembic revision --autogenerate, alembic upgrade head).
+Файлы:
+
+
+
+
+
+__init__.py: Делает alembic модулем.
+
+
+
+env.py: Настройка Alembic (подключение к базе, запуск миграций).
+
+
+
+README: Документация Alembic.
+
+
+
+script.py.mako: Шаблон для новых миграций.
+
+
+
+versions/:
+
+
+
+
+
+2025_04_18_0045_02a0c57328f3_initial_database_setup.py: Начальная схема (таблицы users, units, др.).
+
+
+
+2025_04_18_1308_aadbb94e6051_add_missing_tables_including_users.py: Добавлены employee_company, company_items.
+
+
+
+2025_04_22_2015_6ed7e3ba8c81_sync_company_items_schema.py: Синхронизация company_items (поля identifier, ean13).
+
+
+
+2025_04_22_2038_54152b5df198_add_name_author_active_to_queries.py: Поля name, author, active для queries.
+
+
+
+models/
+Модели SQLAlchemy для таблиц PostgreSQL. Все наследуются от Base (из user.py).
+Назначение: Определение структуры базы данных.
+Файлы:
+
+
+
+
+
+__init__.py: Делает models модулем.
+
+
+
+category.py: Таблица categories (группы товаров: id, name, parent_id, до 3 уровней).
+
+
+
+company_item_categories.py: Связь company_items ↔ categories (many-to-many, таблица company_item_categories).
+
+
+
+company_item.py: Таблица company_items (прайсы: id, company_id, identifier, ean13, name, unit_id, rrprice, microwholeprice, mediumwholeprice, maxwholeprice, stock).
+
+
+
+company.py: Таблица companies (компании: id, inn, name, legal_name, legal_address, post_address).
+
+
+
+employee_company.py: Связь users ↔ companies (many-to-many, таблица employee_company: user_id, company_id).
+
+
+
+goods_categories.py: Связь goods ↔ categories (many-to-many, таблица goods_categories).
+
+
+
+goods.py: Таблица goods (товары: id, ean13, name, unit_id, description, stock).
+
+
+
+price_history.py: Таблица price_history (история цен company_items: id, company_item_id, price, recorded_at).
+
+
+
+query.py: Таблица queries (SQL-запросы админа: id, name, query_text, author, active).
+
+
+
+stock_history.py: Таблица stock_history (история остатков company_items: id, company_item_id, stock, recorded_at).
+
+
+
+unit.py: Таблица units (единицы измерения: id, name, напр., шт, уп).
+
+
+
+user.py: Таблица users (пользователи: id, login, password, role). Основа для Base.metadata.
+
+
+
+warehouse.py: Таблица warehouses (склады: id, address, company_id).
+
+
+
+routers/
+Роутеры FastAPI для разделения эндпоинтов.
+Назначение: Логика API (обработка запросов).
+Файлы:
+
+
+
+
+
+admin.py: Эндпоинты /admin/structure (структура базы), /admin/query (SQL-запросы).
+
+
+
+auth.py: Эндпоинт /login (JWT-токены, вход по логину/паролю).
+
+
+
+goods.py: Эндпоинты /goods/* (управление товарами, пока не реализовано).
+
+
+
+schemas/
+Pydantic-схемы для валидации данных API.
+Назначение: Валидация входных/выходных данных эндпоинтов.
+Файлы:
+
+
+
+
+
+goods.py: Схемы для Goods (валидация ean13, name, stock).
+
+
+
+query.py: Схемы для Query (валидация query_text, name, author).
+
+
+
+user.py: Схемы для User (валидация login, password, role).
+
+
+
+tests/
+Тесты для backend (pytest).
+Назначение: Проверка API.
+Файлы:
+
+
+
+
+
+__init__.py: Делает tests модулем.
+
+
+
+conftest.py: Фикстуры (тестовая база SQLite, клиент FastAPI).
+
+
+
+test_admin.py: Тесты для /admin/* (структура, запросы).
+
+
+
+test_auth.py: Тесты для /login, /dashboard.
+
+
+
+test_moderator.py: Тесты для /moderator/upload-price, /confirm-upload.
 
 3. Папка frontend/
 
 Описание:
+Клиентская часть на React + TypeScript. UI для авторизации, дашборда, модератора (/moderator), админа (/admin). Использует react-router-dom для роутинга, jwt-decode для токенов, fetch для API. Настроен через craco для фикса багов Webpack.
 
-Клиентская часть на React + TypeScript. UI для авторизации, дашборда, модератора (/moderator), админа (/admin). Использует react-router-dom для роутинга, jwt-decode для токенов, axios/fetch для API. Настроен через craco для кастомизации Webpack.
+Подпапки и файлы
 
-Подпапки и файлы:
 
-    .gitignore
-    Описание: Игнорирует node_modules, сборки, кэш.
-    Назначение: Контроль версий.
-    craco.config.js
-    Описание: Кастомизация react-scripts (фикс предупреждений setupMiddlewares).
-    Назначение: Настройка Webpack/DevServer.
-    package.json
-    Описание: Зависимости (react, react-router-dom, jwt-decode, @testing-library/react) и скрипты (start, build, test).
-    Назначение: Управление проектом (npm start).
-    package-lock.json
-    Описание: Фиксация версий зависимостей.
-    Назначение: Репродуцируемость.
-    README.md
-    Описание: Документация фронта (скорее всего, шаблон от Create React App).
-    Назначение: Инструкции.
-    tsconfig.json
-    Описание: Настройки TypeScript (строгая типизация, пути, jsx).
-    Назначение: Компиляция TS.
-    node_modules/
-    Описание: Зависимости фронта.
-    Назначение: Библиотеки (react, typescript, etc.).
-    public/
-    Описание: Статические файлы для сборки.
-    Назначение: HTML, иконки, PWA.
-    Файлы:
-        favicon.ico: Иконка сайта.
-        index.html: Главный HTML-шаблон, точка входа React.
-        logo192.png, logo512.png: Иконки для PWA.
-        manifest.json: Манифест для PWA (имя, иконки).
-        robots.txt: Правила для поисковых ботов (SEO).
-    src/
-    Описание: Исходники фронта (компоненты, страницы, стили, типы).
-    Назначение: Логика UI.
-    Файлы:
-        App.tsx: Главный компонент (страница логина, роутинг).
-        index.css: Глобальные стили.
-        index.tsx: Рендеринг приложения, BrowserRouter для роутинга.
-        components/: Переиспользуемые компоненты.
-            Dashboard.tsx: Дашборд (кнопки для /moderator, /admin, /goods).
-        pages/: Страницы приложения.
-            Admin.tsx: Страница админа (управление структурой, SQL-запросы).
-            Goods.tsx: Страница товаров (пока не реализована?).
-            Moderator.tsx: Страница модератора (загрузка Excel, редактирование company_items).
-        types/: TypeScript-типы.
-            index.ts: Типы для API (CompanyItem, User, Config).
-    tests/
-    Описание: Тесты фронта (@testing-library/react).
-    Назначение: Проверка UI.
-    Файлы:
-        Admin.test.tsx: Тесты для Admin.tsx (рендеринг, формы).
-        Dashboard.test.tsx: Тесты для Dashboard.tsx (навигация).
-        DataTable.test.tsx: Тесты для таблицы (в Admin/Moderator).
-        QueryForm.test.tsx: Тесты для формы запросов (в Admin).
+
+
+
+.gitignore
+Игнорирует node_modules, сборки, кэш.
+Назначение: Контроль версий.
+
+
+
+craco.config.js
+Кастомизация react-scripts (фикс предупреждений setupMiddlewares).
+Назначение: Настройка Webpack/DevServer.
+
+
+
+package.json
+Зависимости: react, react-router-dom, jwt-decode, @testing-library/react. Скрипты: start, build, test.
+Назначение: Управление проектом (npm start).
+
+
+
+package-lock.json
+Фиксация версий зависимостей.
+Назначение: Репродуцируемость.
+
+
+
+README.md
+Документация фронта (шаблон от Create React App).
+Назначение: Инструкции по запуску/сборке.
+
+
+
+tsconfig.json
+Настройки TypeScript: строгая типизация, пути, JSX.
+Назначение: Компиляция TypeScript.
+
+
+
+node_modules/
+Зависимости фронта.
+Назначение: Библиотеки (react, typescript, др.).
+
+
+
+public/
+Статические файлы для сборки.
+Назначение: HTML, иконки, PWA.
+Файлы:
+
+
+
+
+
+favicon.ico: Иконка сайта.
+
+
+
+index.html: Главный HTML-шаблон, точка входа React.
+
+
+
+logo192.png, logo512.png: Иконки для PWA.
+
+
+
+manifest.json: Манифест PWA (имя, иконки).
+
+
+
+robots.txt: Правила для поисковых ботов (SEO).
+
+
+
+src/
+Исходники фронта: компоненты, страницы, стили, типы.
+Назначение: Логика UI.
+Файлы:
+
+
+
+
+
+App.tsx: Главный компонент (страница логина, роутинг через react-router-dom).
+
+
+
+index.css: Глобальные стили.
+
+
+
+index.tsx: Рендеринг приложения, BrowserRouter для роутинга.
+
+
+
+components/: Переиспользуемые компоненты.
+
+
+
+
+
+Dashboard.tsx: Дашборд (кнопки для /moderator, /admin, /goods).
+
+
+
+pages/: Страницы приложения.
+
+
+
+
+
+Admin.tsx: Страница админа (управление структурой, SQL-запросы).
+
+
+
+Goods.tsx: Страница товаров (пока не реализована).
+
+
+
+Moderator.tsx: Страница модератора (загрузка Excel, редактирование company_items).
+
+
+
+types/: TypeScript-типы.
+
+
+
+
+
+index.ts: Типы для API (CompanyItem, User, Config).
+
+
+
+tests/
+Тесты фронта (@testing-library/react).
+Назначение: Проверка UI.
+Файлы:
+
+
+
+
+
+Admin.test.tsx: Тесты для Admin.tsx (рендеринг, формы).
+
+
+
+Dashboard.test.tsx: Тесты для Dashboard.tsx (навигация).
+
+
+
+DataTable.test.tsx: Тесты для таблицы (в Admin/Moderator).
+
+
+
+QueryForm.test.tsx: Тесты для формы запросов (в Admin).
 
 Комментарии для ориентировки
 
-    Backend:
-        Точка входа: main.py — запускает FastAPI, подключает routers/, создаёт таблицы.
-        Модели: models/company_item.py — ядро для прайсов, models/user.py — база для Base.
-        Роутеры: routers/auth.py — авторизация, routers/admin.py — SQL, routers/goods.py — для будущих /goods.
-        Миграции: alembic/versions/ — следи за новыми миграциями (alembic upgrade head).
-        Тесты: tests/test_moderator.py — проверка /moderator/upload-price, /confirm-upload. Запуск: pytest backend/tests.
-        База: PostgreSQL (rub2b, germush:Gremushka27112007). Таблицы: company_items, units, users (логин germush).
-    Frontend:
-        Точка входа: index.tsx → App.tsx → роутинг (/, /moderator, /admin).
-        Ключевые страницы: Moderator.tsx — загрузка прайсов, Admin.tsx — SQL-запросы.
-        API: Запросы через fetch (http://127.0.0.1:8000). Токены хранятся в localStorage.
-        Тесты: tests/ — базовые, добавить для Moderator.tsx (загрузка Excel).
-        Craco: craco.config.js — фикс багов react-scripts. Запуск: npm start.
-    Текущий прогресс:
-        Починили /moderator/upload-price и /confirm-upload: загрузка Excel (44 строки), обработка company_items, файл ошибок.
-        База заполняется (company_items: identifier, ean13, rrprice, stock).
-        Следующий шаг: Реализовать /goods (страница Goods.tsx, роутер goods.py).
-    Советы:
-        Проверяй логи: INFO/ERROR в консоли FastAPI.
-        DevTools (Network): Следи за POST /moderator/upload-price, /confirm-upload.
-        SQL: SELECT * FROM company_items; для проверки данных.
-        Миграции: alembic revision --autogenerate при изменении моделей.
+Backend
+
+
+
+
+
+Точка входа: main.py — запускает FastAPI, подключает routers/, создаёт таблицы.
+
+
+
+Модели:
+
+
+
+
+
+company_item.py: Ядро для прайсов (company_items: identifier, ean13, rrprice, stock).
+
+
+
+user.py: База для Base.metadata (таблица users).
+
+
+
+Роутеры:
+
+
+
+
+
+auth.py: /login (JWT-токены).
+
+
+
+admin.py: /admin/* (SQL-запросы, структура).
+
+
+
+goods.py: /goods/* (будущие эндпоинты для товаров).
+
+
+
+Миграции: alembic/versions/ — следить за новыми (alembic upgrade head).
+
+
+
+Тесты: test_moderator.py — проверяет /moderator/upload-price, /confirm-upload. Запуск: pytest backend/tests.
+
+
+
+База: PostgreSQL (rub2b, germush:Gremushka27112007).
+
+
+
+
+
+Таблицы: company_items, units, users (логин germush).
+
+
+
+Проверка: SELECT * FROM company_items;
+
+
+
+Папка tmp/: Вероятно, для файлов ошибок (/moderator/confirm-upload).
+
+Frontend
+
+
+
+
+
+Точка входа: index.tsx → App.tsx → роутинг (/, /moderator, /admin).
+
+
+
+Ключевые страницы:
+
+
+
+
+
+Moderator.tsx: Загрузка Excel (до 44 строк), редактирование company_items.
+
+
+
+Admin.tsx: SQL-запросы, структура базы.
+
+
+
+Goods.tsx: Пустая, для реализации.
+
+
+
+API: Запросы через fetch (http://127.0.0.1:8000). Токены в localStorage.
+
+
+
+Тесты: tests/ — базовые, добавить для Moderator.tsx (загрузка Excel).
+
+
+
+Craco: craco.config.js — фикс багов react-scripts. Запуск: npm start.
+
+Текущий прогресс
+
+
+
+
+
+Сделано:
+
+
+
+
+
+/moderator/upload-price и /confirm-upload: загрузка Excel, обработка company_items, файл ошибок в tmp/.
+
+
+
+База заполняется (company_items: identifier, ean13, rrprice, stock).
+
+
+
+Убрана выборка папки (webkitdirectory) в Moderator.tsx.
+
+
+
+Проблемы:
+
+
+
+
+
+/goods не реализовано (ни UI, ни API).
+
+
+
+Тесты для Moderator.tsx отсутствуют.
+
+Советы
+
+
+
+
+
+Логи: Проверять INFO/ERROR в консоли FastAPI.
+
+
+
+DevTools: Следить за POST /moderator/upload-price, /confirm-upload в Network.
+
+
+
+SQL: SELECT * FROM company_items; для проверки данных.
+
+
+
+Миграции: alembic revision --autogenerate при изменении моделей.
+
+
+
+Тесты: Добавить для Moderator.tsx (рендеринг, загрузка файла).
 
 Что дальше
 
-    Задача: Реализовать /goods (эндпоинты в routers/goods.py, UI в Goods.tsx).
-    Шаги:
-        Определи, что должно быть на /goods (поиск товаров, отображение goods или company_items?).
-        Скинь текущий routers/goods.py и Goods.tsx для доработки.
-        Если нужны категории (categories), добавим фильтры в UI и запросы в API.
+Задача: Реализовать /goods.
+Шаги:
+
+
+
+
+
+Определить функционал /goods:
+
+
+
+
+
+Отображение goods или company_items?
+
+
+
+Поиск/фильтры по ean13, name, категориям (categories)?
+
+
+
+Доработать:
+
+
+
+
+
+routers/goods.py: Эндпоинты (напр., GET /goods, POST /goods).
+
+
+
+Goods.tsx: UI (таблица, фильтры, запросы к API).
+
+
+
+Если нужны категории:
+
+
+
+
+
+Добавить фильтры в Goods.tsx.
+
+
+
+Расширить goods.py (API для categories, goods_categories).
+
+
+
+Поделиться текущими routers/goods.py и Goods.tsx для анализа.

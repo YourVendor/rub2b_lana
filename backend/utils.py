@@ -37,7 +37,7 @@ class PriceUploadConfig(BaseModel):
 class ConfirmUploadConfig(BaseModel):
     company_id: int
     identifier_column: str
-    ean13_column: Optional[str] = None
+    ean13_column: str
     name_column: str
     unit_column: str
     rrprice_column: str
@@ -48,10 +48,11 @@ class ConfirmUploadConfig(BaseModel):
     skip_first_row: bool
     update_missing: str
     update_name: bool
-    confirmed_items: List[Dict[str, Any]]
+    confirmed_items: List[dict]
     ean13_decisions: Dict[str, str]
     unit_mappings: Dict[str, str]
-    rows: List[Dict[str, Any]]
+    rows: Optional[List[dict]] = None
+    zero_price_action: str = "ignore"
 
     @field_validator("update_missing")
     def validate_update_missing(cls, v):

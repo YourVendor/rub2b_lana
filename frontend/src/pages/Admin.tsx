@@ -8,11 +8,15 @@ interface Query {
   active: boolean;
 }
 
+interface QueryResult {
+  [key: string]: string | number | boolean | null;
+}
+
 const Admin: React.FC = () => {
   const [structure, setStructure] = useState<string[]>([]);
   const [queryName, setQueryName] = useState("");
   const [queryText, setQueryText] = useState("");
-  const [result, setResult] = useState<any[]>([]);
+  const [result, setResult] = useState<QueryResult[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [queries, setQueries] = useState<Query[]>([]);
   const [showDialog, setShowDialog] = useState(false);
@@ -34,8 +38,9 @@ const Admin: React.FC = () => {
         const data = await response.json();
         setStructure(data.tables);
         setError(null);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : "Неизвестная ошибка";
+        setError(errorMessage);
       }
     };
 
@@ -52,8 +57,9 @@ const Admin: React.FC = () => {
         if (!response.ok) throw new Error("Не удалось загрузить запросы");
         const data = await response.json();
         setQueries(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : "Неизвестная ошибка";
+        setError(errorMessage);
       }
     };
 
@@ -106,8 +112,9 @@ const Admin: React.FC = () => {
       if (queriesResponse.ok) {
         setQueries(await queriesResponse.json());
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Неизвестная ошибка";
+      setError(errorMessage);
     }
   };
 
@@ -145,8 +152,9 @@ const Admin: React.FC = () => {
       if (queriesResponse.ok) {
         setQueries(await queriesResponse.json());
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Неизвестная ошибка";
+      setError(errorMessage);
     }
   };
 
@@ -176,8 +184,9 @@ const Admin: React.FC = () => {
       if (queriesResponse.ok) {
         setQueries(await queriesResponse.json());
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Неизвестная ошибка";
+      setError(errorMessage);
     }
   };
 

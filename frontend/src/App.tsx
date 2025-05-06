@@ -31,9 +31,10 @@ const App: React.FC = () => {
       const data = await response.json();
       localStorage.setItem("token", data.access_token);
       navigate("/dashboard");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Ошибка:", error);
-      alert(error.message || "Неверный логин или пароль");
+      const errorMessage = error instanceof Error ? error.message : "Неверный логин или пароль";
+      alert(errorMessage);
     }
   };
 
