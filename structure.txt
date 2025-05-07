@@ -23,6 +23,9 @@ D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_0338_1571ae2
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_0356_f82fe6f1b91c_final_sync.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_0444_a8aa46f5ee09_increase_user_password_length_to_255.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_04_23_1410_88e6ed2b0908_add_units_table.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_05_06_1200_create_wb_tables.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_05_06_1545_068ff5c80fd5_merge_multiple_heads.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\versions\2025_05_06_1726_3dd1fdf2b394_add_brand_to_goods_and_company_items.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\__init__.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\env.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\alembic\README
@@ -34,12 +37,21 @@ D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\category.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\company_item_categories.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\company_item.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\company.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\competitors_wb_categories.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\competitors_wb.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\employee_company.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\goods_categories.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\goods_wb_goods.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\goods_wb.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\goods.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\price_history.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\prices.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\query.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\search_wb_categories.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\search_wb_competitors.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\search_wb.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\search_words_wb_categories.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\search_words_wb.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\stock_history.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\unit.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\models\user.py
@@ -48,8 +60,12 @@ D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\__pycache__
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\admin.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\auth.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\competitors_wb.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\goods_wb.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\goods.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\moderator.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\search_wb.py
+D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\search_words_wb.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\routers\units.py
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\schemas
 D:\VSCODE\rub2b_lana\rub2b_lana\backend\schemas\goods.py
@@ -116,717 +132,44 @@ D:\VSCODE\rub2b_lana\rub2b_lana\structure.txt
 
 Корень проекта: D:\VSCODE\rub2b_lana\rub2b_lana
 
-Описание проекта
+Описание проекта B2B-платформа для управления прайсами, товарами и аналитикой конкурентов. Backend на FastAPI с PostgreSQL (база rub2b, пользователь germush:Gremushka27112007) использует SQLAlchemy для моделей, Alembic для миграций, Pydantic для валидации. Frontend на React с TypeScript, react-router-dom для роутинга, fetch для API, jwt-decode для токенов. Основной функционал включает авторизацию, загрузку и редактирование прайсов, админские SQL-запросы, управление товарами, аналитику Wildberries (WB-таблицы). Окружение настроено через виртуальное окружение Python (venv) и npm (package.json). Git-игнор исключает временные файлы.
 
-B2B-платформа для управления прайсами и товарами.
+Текущий прогресс: загрузка прайсов в Moderator.tsx обрабатывает Excel (до 44 строк) с поддержкой brand, сохраняет в company_items и goods, возвращает файл ошибок в tmp/. Эндпоинт /goods частично реализован (API в routers/goods.py, UI в Goods.tsx). Добавлены WB-таблицы (search_wb, competitors_wb, goods_wb) для аналитики конкурентов. Реализован SearchWB.tsx для загрузки CSV (~40 МБ, лимит 100 МБ) с поисковыми запросами Wildberries, фильтрацией по ключевым словам (search_words_wb) и категориям (search_words_wb_categories), обновлением search_wb (среднее frequency_per_month), выводом списка запросов с категориями и кликабельными конкурентами. Проблем с портом 3000 нет после очистки процессов.
 
+Следующий шаг: полная реализация /goods с фильтрами по ean13, name, brand, категориям и поддержкой цен (prices). Создание страницы для заполнения categories и competitors для search_wb.
 
+Кэш и временные файлы Папка pycache содержит скомпилированные Python-файлы, создаваемые интерпретатором, и безопасно игнорируется в Git. Папка .pytest_cache хранит кэш pytest для тестов backend, удаление не влияет на работу.
 
+Корневые файлы и папки Файл .gitignore исключает временные файлы (pycache, node_modules, venv, *.xlsx, *.csv, tmp/) для чистоты репозитория. Файл alembic.ini настраивает миграции Alembic с URL PostgreSQL (postgresql://germush:Gremushka27112007@localhost/rub2b) для управления схемой базы. Файл requirements.txt перечисляет зависимости backend (fastapi, sqlalchemy, pandas, psycopg2-binary, pytest, openpyxl), устанавливаемые через pip install -r requirements.txt. Файл structure.txt документирует структуру проекта для разработчиков. Папка backend содержит серверную часть (API, модели, миграции, тесты). Папка frontend включает клиентскую часть (React, UI). Папка venv изолирует зависимости Python, активируется через venv\Scripts\activate. Файлы rub2b_backup_20250423.sql и rub2b_backup_20250423_3.sql хранят дампы базы для восстановления.
 
+Папка backend Сервер на FastAPI обслуживает эндпоинты для авторизации (/login), загрузки прайсов (/moderator/upload-price, /confirm-upload), админских запросов (/admin/structure, /admin/query), управления товарами (/goods), аналитики Wildberries (/search_wb, /competitors_wb, /goods_wb, /search_wb/upload-csv). База PostgreSQL (rub2b) содержит таблицы company_items, goods, users, units, prices, queries, search_wb, competitors_wb и другие. Папка tmp используется для временных файлов, таких как отчеты об ошибках при загрузке прайсов или CSV.
 
-Backend: FastAPI (Python) + PostgreSQL (база rub2b, пользователь germush:Gremushka27112007). Использует SQLAlchemy для моделей, Alembic для миграций, Pydantic для валидации. Основной функционал: авторизация (/login), загрузка/редактирование прайсов (/moderator), админские SQL-запросы (/admin).
+Файл init.py делает backend Python-модулем для импортов. Папка pycache хранит кэш Python. Папка .pytest_cache содержит кэш pytest. Файл main.py запускает FastAPI, подключает роутеры и создает таблицы через Base.metadata.create_all. Файл database.py настраивает подключение к PostgreSQL через SQLAlchemy. Файл pytest.ini конфигурирует pytest (пути, маркеры, PYTHONPATH). Файл requirements.txt дублирует зависимости из корня. Файл utils.py содержит вспомогательные функции (например, для обработки Excel).
 
+Папка alembic управляет миграциями. Файл init.py делает alembic модулем. Файл env.py настраивает подключение и запуск миграций. Файл README документирует Alembic. Файл script.py.mako задает шаблон миграций. Папка versions содержит миграции: 2025_04_18_0045_02a0c57328f3_initial_database_setup.py создает базовые таблицы (users, units); 2025_04_18_1308_aadbb94e6051_add_missing_tables_including_users.py добавляет employee_company, company_items; 2025_04_22_2015_6ed7e3ba8c81_sync_company_items_schema.py синхронизирует company_items (identifier, ean13); 2025_04_22_2038_54152b5df198_add_name_author_active_to_queries.py добавляет name, author, active в queries; 2025_05_06_1200_create_wb_tables.py создает WB-таблицы (search_wb, competitors_wb, goods_wb); 2025_05_06_1545_068ff5c80fd5_merge_multiple_heads.py объединяет ветки; 2025_05_06_1726_3dd1fdf2b394_add_brand_to_goods_and_company_items.py добавляет brand в goods и company_items.
 
+Папка models определяет структуру базы через SQLAlchemy, наследуя от Base (user.py). Файл init.py делает models модулем. Файл category.py описывает таблицу categories (группы товаров: id, name, parent_id, до 3 уровней). Файл company_item_categories.py связывает company_items и categories (many-to-many). Файл company_item.py определяет таблицу company_items (прайсы: id, company_id, identifier, ean13, name, unit_id, brand, rrprice, microwholeprice, mediumwholeprice, maxwholeprice, stock). Файл company.py описывает таблицу companies (id, inn, name, legal_name, legal_address, post_address). Файл competitors_wb.py определяет таблицу competitors_wb (id, hyperlink, name, img_competitors_wb). Файл competitors_wb_categories.py связывает competitors_wb и categories. Файл employee_company.py связывает users и companies (many-to-many). Файл goods_categories.py связывает goods и categories. Файл goods_wb.py описывает таблицу goods_wb (id, article_our, stock, price, name). Файл goods_wb_goods.py связывает goods_wb и goods. Файл goods.py определяет таблицу goods (ean13, name, unit_id, description, category, brand, stock). Файл price_history.py хранит историю цен company_items. Файл prices.py определяет таблицу prices (goods_ean13, company_id, price_type, price). Файл query.py описывает таблицу queries (SQL-запросы админа: id, name, query_text, author, active). Файл search_wb.py определяет таблицу search_wb (id, text, frequency_per_month). Файл search_wb_categories.py связывает search_wb и categories. Файл search_wb_competitors.py связывает search_wb и competitors_wb. Файл search_words_wb.py описывает таблицу search_words_wb (id, name). Файл search_words_wb_categories.py связывает search_words_wb и categories. Файл stock_history.py хранит историю остатков company_items. Файл unit.py описывает таблицу units (id, name, например, шт, уп). Файл user.py определяет таблицу users (id, login, password, role). Файл warehouse.py описывает таблицу warehouses (id, address, company_id).
 
-Frontend: React (TypeScript) + react-router-dom для роутинга, fetch для API, jwt-decode для токенов. UI для логина, дашборда, модератора и админа. Настроен через craco для кастомизации Webpack.
+Папка routers содержит роутеры FastAPI. Файл admin.py реализует /admin/structure (структура базы) и /admin/query (SQL-запросы). Файл auth.py обслуживает /login (JWT-токены). Файл competitors_wb.py управляет /competitors_wb (данные конкурентов Wildberries). Файл goods_wb.py обслуживает /goods_wb (товары Wildberries). Файл goods.py реализует /goods (список товаров, в процессе). Файл moderator.py обслуживает /moderator/upload-price и /confirm-upload (загрузка прайсов). Файл search_wb.py управляет /search_wb (поисковые запросы Wildberries). Файл search_wb_upload.py реализует /search_wb/upload-csv (загрузка CSV), /search_wb/apply-updates (обновление search_wb) и /search_wb (список запросов). Файл search_words_wb.py обслуживает /search_words_wb (ключевые слова Wildberries). Файл units.py управляет /units (единицы измерения).
 
+Папка schemas содержит Pydantic-схемы для валидации. Файл goods.py валидирует данные goods (ean13, name, brand, stock). Файл query.py валидирует queries (query_text, name, author). Файл user.py валидирует users (login, password, role).
 
+Папка tests содержит тесты pytest. Файл init.py делает tests модулем. Файл conftest.py задает фикстуры (SQLite для тестов, клиент FastAPI). Файл test_admin.py тестирует /admin. Файл test_auth.py тестирует /login. Файл test_moderator.py тестирует /moderator/upload-price и /confirm-upload.
 
-Окружение: Виртуальное окружение Python (venv), зависимости в requirements.txt (backend) и package.json (frontend). Git-игнор для временных файлов.
+Папка frontend Frontend на React с TypeScript реализует UI для авторизации, дашборда, модератора, админа, товаров, аналитики Wildberries. Использует react-router-dom для роутинга, jwt-decode для токенов, fetch для API, papaparse для CSV. Craco исправляет баги Webpack.
 
+Файл .gitignore исключает node_modules и сборки. Файл craco.config.js настраивает Webpack/DevServer. Файл package.json определяет зависимости (react, react-router-dom, jwt-decode, @testing-library/react, papaparse) и скрипты (start, build, test). Файл package-lock.json фиксирует версии зависимостей. Файл README.md описывает запуск и сборку. Файл tsconfig.json настраивает TypeScript (строгая типизация, JSX). Папка node_modules хранит зависимости. Папка public содержит статические файлы: favicon.ico (иконка), index.html (HTML-шаблон), logo192.png и logo512.png (иконки PWA), manifest.json (PWA-манифест), robots.txt (SEO).
 
+Папка src содержит исходники. Файл App.tsx задает роутинг (/, /moderator, /admin, /goods, /search_wb). Файл index.css задает глобальные стили. Файл index.tsx рендерит приложение с BrowserRouter. Папка components содержит переиспользуемые компоненты: Dashboard.tsx (дашборд с навигацией). Папка pages содержит страницы: Admin.tsx (SQL-запросы, структура базы), Goods.tsx (таблица товаров, в процессе), Moderator_item_to_goods.tsx (связь товаров и прайсов), Moderator.tsx (загрузка Excel с brand, редактирование company_items), SearchWB.tsx (загрузка CSV с поисковыми запросами Wildberries, фильтрация по категориям, обновление search_wb, вывод списка запросов). Папка types содержит типы: index.ts (CompanyItem, Goods, User, Config, SearchWB, Category). Папка tests содержит тесты: Admin.test.tsx, Dashboard.test.tsx, DataTable.test.tsx, QueryForm.test.tsx.
 
-Текущий прогресс: Загрузка прайсов в Moderator.tsx работает (Excel, до 44 строк), обрабатывает company_items, возвращает файл ошибок. Папка tmp добавлена (вероятно, для временных файлов на backend'е).
+Комментарии для ориентировки Backend: точка входа main.py запускает FastAPI, подключает роутеры, создает таблицы. Модели company_item.py (прайсы с brand) и goods.py (товары с brand) — ядро данных. Роутеры auth.py (/login), admin.py (/admin), moderator.py (/moderator), goods.py (/goods, в процессе), search_wb_upload.py (/search_wb/upload-csv, /search_wb/apply-updates) обрабатывают запросы. Миграции в alembic/versions (последняя — 2025_05_06_1726_3dd1fdf2b394) синхронизируют базу, включая brand. Тесты в test_moderator.py проверяют загрузку прайсов. База PostgreSQL (rub2b, germush:Gremushka27112007) содержит company_items, goods, prices, search_wb. Проверка: SELECT * FROM goods; SELECT * FROM company_items; SELECT * FROM search_wb;. Папка tmp хранит файлы ошибок.
 
+Frontend: точка входа index.tsx рендерит App.tsx с роутингом (/, /moderator, /admin, /goods, /search_wb). Moderator.tsx загружает Excel с brand, сохраняет в company_items и goods. Admin.tsx выполняет SQL-запросы. Goods.tsx в разработке (таблица товаров). SearchWB.tsx загружает CSV с поисковыми запросами, фильтрует по ключевым словам и категориям, обновляет search_wb, показывает список запросов с категориями и кликабельными конкурентами. API-запросы через fetch (http://127.0.0.1:8000), токены в localStorage. Тесты в tests покрывают Admin и Dashboard, но не Moderator.tsx или SearchWB.tsx. Craco (craco.config.js) фиксит баги npm start.
 
+Текущий прогресс Загрузка прайсов в Moderator.tsx работает, поддерживает brand, сохраняет в company_items и goods, возвращает ошибки в tmp/. Эндпоинт /goods возвращает список товаров (routers/goods.py), но UI (Goods.tsx) требует доработки (фильтры, цены). WB-таблицы (search_wb, competitors_wb, goods_wb) добавлены для аналитики. SearchWB.tsx реализован для загрузки CSV (~40 МБ, лимит 100 МБ), фильтрации по ключевым словам (search_words_wb) и категориям (обязательный выбор), обновления search_wb (среднее frequency_per_month), вывода списка запросов с категориями (name) и кликабельными конкурентами (hyperlink). Порт 3000 очищен, CORS настроен (main.py).
 
-Следующий шаг: Реализация /goods (UI в Goods.tsx, API в routers/goods.py).
+Проблемы: /goods не полностью реализован (нет фильтров, цен в UI); тесты для Moderator.tsx и SearchWB.tsx отсутствуют.
 
-Кэш и временные файлы
+Советы Следить за логами FastAPI (INFO/ERROR) в консоли. Проверять POST-запросы (/moderator/upload-price, /search_wb/upload-csv) в DevTools (Network). Выполнять SQL: SELECT * FROM goods; SELECT * FROM company_items; SELECT * FROM search_wb; для проверки данных. Создавать миграции (alembic revision --autogenerate) при изменении моделей. Добавить тесты для Moderator.tsx и SearchWB.tsx (загрузка файлов, рендеринг).
 
-
-
-
-
-__pycache__/: Скомпилированные Python-файлы. Автоматически создаются, можно игнорировать.
-
-
-
-.pytest_cache/: Кэш pytest для тестов. Можно удалять, не влияет на работу.
-
-1. Корневые файлы и папки
-
-
-
-
-
-.gitignore
-Игнорирует временные файлы (__pycache__, node_modules, venv, *.xlsx, tmp/).
-Назначение: Контроль версий в Git, исключение мусора из репозитория.
-
-
-
-alembic.ini
-Конфигурация Alembic для миграций базы данных. Указывает URL PostgreSQL: postgresql://germush:Gremushka27112007@localhost/rub2b.
-Назначение: Управление миграциями схемы базы (alembic upgrade head).
-
-
-
-requirements.txt
-Зависимости backend: fastapi, sqlalchemy, pandas, psycopg2-binary, pytest, openpyxl и др.
-Назначение: Установка окружения (pip install -r requirements.txt).
-
-
-
-structure.txt
-Пользовательский файл со списком файлов/папок проекта.
-Назначение: Документация структуры для разработчиков.
-
-
-
-backend/
-Серверная часть (FastAPI, PostgreSQL, Alembic).
-Назначение: API, база данных, тесты, миграции.
-
-
-
-frontend/
-Клиентская часть (React, TypeScript).
-Назначение: UI, взаимодействие с API через fetch.
-
-
-
-venv/
-Виртуальное окружение Python с зависимостями backend.
-Назначение: Изоляция зависимостей. Активация: venv\Scripts\activate.
-
-2. Папка backend/
-
-Описание:
-Сервер на FastAPI. Содержит модели SQLAlchemy (models/), роутеры (routers/), Pydantic-схемы (schemas/), миграции (alembic/), тесты (tests/).
-
-
-
-
-
-Эндпоинты: /login (авторизация), /moderator/upload-price и /confirm-upload (загрузка прайсов), /admin/structure и /admin/query (админские запросы).
-
-
-
-База: PostgreSQL (rub2b). Таблицы: company_items (прайсы), users, units, queries, др.
-
-
-
-Папка tmp/: Вероятно, для временных файлов (например, файлов ошибок от /moderator/confirm-upload).
-
-Подпапки и файлы
-
-
-
-
-
-__init__.py
-Пустой файл, делает backend Python-модулем.
-Назначение: Возможность импортов (from backend import ...).
-
-
-
-__pycache__/
-Кэш Python для backend.
-Назначение: Временные данные, создаются интерпретатором.
-
-
-
-.pytest_cache/
-Кэш pytest для тестов backend.
-Назначение: Временные данные, можно удалять.
-
-
-
-main.py
-Точка входа FastAPI. Создаёт приложение, подключает routers/, инициализирует таблицы через Base.metadata.create_all.
-Назначение: Запуск сервера (uvicorn backend.main:app --host 127.0.0.1 --port 8000).
-
-
-
-database.py
-Настройка подключения к PostgreSQL через SQLAlchemy (create_engine, SessionLocal).
-Назначение: Управление сессиями базы данных для запросов.
-
-
-
-pytest.ini
-Конфигурация pytest: пути, маркеры, PYTHONPATH.
-Назначение: Настройка тестов (pytest backend/tests).
-
-
-
-requirements.txt
-Копия зависимостей из корня.
-Назначение: Установка окружения для backend.
-
-
-
-alembic/
-Миграции базы данных через Alembic.
-Назначение: Обновление схемы PostgreSQL (alembic revision --autogenerate, alembic upgrade head).
-Файлы:
-
-
-
-
-
-__init__.py: Делает alembic модулем.
-
-
-
-env.py: Настройка Alembic (подключение к базе, запуск миграций).
-
-
-
-README: Документация Alembic.
-
-
-
-script.py.mako: Шаблон для новых миграций.
-
-
-
-versions/:
-
-
-
-
-
-2025_04_18_0045_02a0c57328f3_initial_database_setup.py: Начальная схема (таблицы users, units, др.).
-
-
-
-2025_04_18_1308_aadbb94e6051_add_missing_tables_including_users.py: Добавлены employee_company, company_items.
-
-
-
-2025_04_22_2015_6ed7e3ba8c81_sync_company_items_schema.py: Синхронизация company_items (поля identifier, ean13).
-
-
-
-2025_04_22_2038_54152b5df198_add_name_author_active_to_queries.py: Поля name, author, active для queries.
-
-
-
-models/
-Модели SQLAlchemy для таблиц PostgreSQL. Все наследуются от Base (из user.py).
-Назначение: Определение структуры базы данных.
-Файлы:
-
-
-
-
-
-__init__.py: Делает models модулем.
-
-
-
-category.py: Таблица categories (группы товаров: id, name, parent_id, до 3 уровней).
-
-
-
-company_item_categories.py: Связь company_items ↔ categories (many-to-many, таблица company_item_categories).
-
-
-
-company_item.py: Таблица company_items (прайсы: id, company_id, identifier, ean13, name, unit_id, rrprice, microwholeprice, mediumwholeprice, maxwholeprice, stock).
-
-
-
-company.py: Таблица companies (компании: id, inn, name, legal_name, legal_address, post_address).
-
-
-
-employee_company.py: Связь users ↔ companies (many-to-many, таблица employee_company: user_id, company_id).
-
-
-
-goods_categories.py: Связь goods ↔ categories (many-to-many, таблица goods_categories).
-
-
-
-goods.py: Таблица goods (товары: id, ean13, name, unit_id, description, stock).
-
-
-
-price_history.py: Таблица price_history (история цен company_items: id, company_item_id, price, recorded_at).
-
-
-
-query.py: Таблица queries (SQL-запросы админа: id, name, query_text, author, active).
-
-
-
-stock_history.py: Таблица stock_history (история остатков company_items: id, company_item_id, stock, recorded_at).
-
-
-
-unit.py: Таблица units (единицы измерения: id, name, напр., шт, уп).
-
-
-
-user.py: Таблица users (пользователи: id, login, password, role). Основа для Base.metadata.
-
-
-
-warehouse.py: Таблица warehouses (склады: id, address, company_id).
-
-
-
-routers/
-Роутеры FastAPI для разделения эндпоинтов.
-Назначение: Логика API (обработка запросов).
-Файлы:
-
-
-
-
-
-admin.py: Эндпоинты /admin/structure (структура базы), /admin/query (SQL-запросы).
-
-
-
-auth.py: Эндпоинт /login (JWT-токены, вход по логину/паролю).
-
-
-
-goods.py: Эндпоинты /goods/* (управление товарами, пока не реализовано).
-
-
-
-schemas/
-Pydantic-схемы для валидации данных API.
-Назначение: Валидация входных/выходных данных эндпоинтов.
-Файлы:
-
-
-
-
-
-goods.py: Схемы для Goods (валидация ean13, name, stock).
-
-
-
-query.py: Схемы для Query (валидация query_text, name, author).
-
-
-
-user.py: Схемы для User (валидация login, password, role).
-
-
-
-tests/
-Тесты для backend (pytest).
-Назначение: Проверка API.
-Файлы:
-
-
-
-
-
-__init__.py: Делает tests модулем.
-
-
-
-conftest.py: Фикстуры (тестовая база SQLite, клиент FastAPI).
-
-
-
-test_admin.py: Тесты для /admin/* (структура, запросы).
-
-
-
-test_auth.py: Тесты для /login, /dashboard.
-
-
-
-test_moderator.py: Тесты для /moderator/upload-price, /confirm-upload.
-
-3. Папка frontend/
-
-Описание:
-Клиентская часть на React + TypeScript. UI для авторизации, дашборда, модератора (/moderator), админа (/admin). Использует react-router-dom для роутинга, jwt-decode для токенов, fetch для API. Настроен через craco для фикса багов Webpack.
-
-Подпапки и файлы
-
-
-
-
-
-.gitignore
-Игнорирует node_modules, сборки, кэш.
-Назначение: Контроль версий.
-
-
-
-craco.config.js
-Кастомизация react-scripts (фикс предупреждений setupMiddlewares).
-Назначение: Настройка Webpack/DevServer.
-
-
-
-package.json
-Зависимости: react, react-router-dom, jwt-decode, @testing-library/react. Скрипты: start, build, test.
-Назначение: Управление проектом (npm start).
-
-
-
-package-lock.json
-Фиксация версий зависимостей.
-Назначение: Репродуцируемость.
-
-
-
-README.md
-Документация фронта (шаблон от Create React App).
-Назначение: Инструкции по запуску/сборке.
-
-
-
-tsconfig.json
-Настройки TypeScript: строгая типизация, пути, JSX.
-Назначение: Компиляция TypeScript.
-
-
-
-node_modules/
-Зависимости фронта.
-Назначение: Библиотеки (react, typescript, др.).
-
-
-
-public/
-Статические файлы для сборки.
-Назначение: HTML, иконки, PWA.
-Файлы:
-
-
-
-
-
-favicon.ico: Иконка сайта.
-
-
-
-index.html: Главный HTML-шаблон, точка входа React.
-
-
-
-logo192.png, logo512.png: Иконки для PWA.
-
-
-
-manifest.json: Манифест PWA (имя, иконки).
-
-
-
-robots.txt: Правила для поисковых ботов (SEO).
-
-
-
-src/
-Исходники фронта: компоненты, страницы, стили, типы.
-Назначение: Логика UI.
-Файлы:
-
-
-
-
-
-App.tsx: Главный компонент (страница логина, роутинг через react-router-dom).
-
-
-
-index.css: Глобальные стили.
-
-
-
-index.tsx: Рендеринг приложения, BrowserRouter для роутинга.
-
-
-
-components/: Переиспользуемые компоненты.
-
-
-
-
-
-Dashboard.tsx: Дашборд (кнопки для /moderator, /admin, /goods).
-
-
-
-pages/: Страницы приложения.
-
-
-
-
-
-Admin.tsx: Страница админа (управление структурой, SQL-запросы).
-
-
-
-Goods.tsx: Страница товаров (пока не реализована).
-
-
-
-Moderator.tsx: Страница модератора (загрузка Excel, редактирование company_items).
-
-
-
-types/: TypeScript-типы.
-
-
-
-
-
-index.ts: Типы для API (CompanyItem, User, Config).
-
-
-
-tests/
-Тесты фронта (@testing-library/react).
-Назначение: Проверка UI.
-Файлы:
-
-
-
-
-
-Admin.test.tsx: Тесты для Admin.tsx (рендеринг, формы).
-
-
-
-Dashboard.test.tsx: Тесты для Dashboard.tsx (навигация).
-
-
-
-DataTable.test.tsx: Тесты для таблицы (в Admin/Moderator).
-
-
-
-QueryForm.test.tsx: Тесты для формы запросов (в Admin).
-
-Комментарии для ориентировки
-
-Backend
-
-
-
-
-
-Точка входа: main.py — запускает FastAPI, подключает routers/, создаёт таблицы.
-
-
-
-Модели:
-
-
-
-
-
-company_item.py: Ядро для прайсов (company_items: identifier, ean13, rrprice, stock).
-
-
-
-user.py: База для Base.metadata (таблица users).
-
-
-
-Роутеры:
-
-
-
-
-
-auth.py: /login (JWT-токены).
-
-
-
-admin.py: /admin/* (SQL-запросы, структура).
-
-
-
-goods.py: /goods/* (будущие эндпоинты для товаров).
-
-
-
-Миграции: alembic/versions/ — следить за новыми (alembic upgrade head).
-
-
-
-Тесты: test_moderator.py — проверяет /moderator/upload-price, /confirm-upload. Запуск: pytest backend/tests.
-
-
-
-База: PostgreSQL (rub2b, germush:Gremushka27112007).
-
-
-
-
-
-Таблицы: company_items, units, users (логин germush).
-
-
-
-Проверка: SELECT * FROM company_items;
-
-
-
-Папка tmp/: Вероятно, для файлов ошибок (/moderator/confirm-upload).
-
-Frontend
-
-
-
-
-
-Точка входа: index.tsx → App.tsx → роутинг (/, /moderator, /admin).
-
-
-
-Ключевые страницы:
-
-
-
-
-
-Moderator.tsx: Загрузка Excel (до 44 строк), редактирование company_items.
-
-
-
-Admin.tsx: SQL-запросы, структура базы.
-
-
-
-Goods.tsx: Пустая, для реализации.
-
-
-
-API: Запросы через fetch (http://127.0.0.1:8000). Токены в localStorage.
-
-
-
-Тесты: tests/ — базовые, добавить для Moderator.tsx (загрузка Excel).
-
-
-
-Craco: craco.config.js — фикс багов react-scripts. Запуск: npm start.
-
-Текущий прогресс
-
-
-
-
-
-Сделано:
-
-
-
-
-
-/moderator/upload-price и /confirm-upload: загрузка Excel, обработка company_items, файл ошибок в tmp/.
-
-
-
-База заполняется (company_items: identifier, ean13, rrprice, stock).
-
-
-
-Убрана выборка папки (webkitdirectory) в Moderator.tsx.
-
-
-
-Проблемы:
-
-
-
-
-
-/goods не реализовано (ни UI, ни API).
-
-
-
-Тесты для Moderator.tsx отсутствуют.
-
-Советы
-
-
-
-
-
-Логи: Проверять INFO/ERROR в консоли FastAPI.
-
-
-
-DevTools: Следить за POST /moderator/upload-price, /confirm-upload в Network.
-
-
-
-SQL: SELECT * FROM company_items; для проверки данных.
-
-
-
-Миграции: alembic revision --autogenerate при изменении моделей.
-
-
-
-Тесты: Добавить для Moderator.tsx (рендеринг, загрузка файла).
-
-Что дальше
-
-Задача: Реализовать /goods.
-Шаги:
-
-
-
-
-
-Определить функционал /goods:
-
-
-
-
-
-Отображение goods или company_items?
-
-
-
-Поиск/фильтры по ean13, name, категориям (categories)?
-
-
-
-Доработать:
-
-
-
-
-
-routers/goods.py: Эндпоинты (напр., GET /goods, POST /goods).
-
-
-
-Goods.tsx: UI (таблица, фильтры, запросы к API).
-
-
-
-Если нужны категории:
-
-
-
-
-
-Добавить фильтры в Goods.tsx.
-
-
-
-Расширить goods.py (API для categories, goods_categories).
-
-
-
-Поделиться текущими routers/goods.py и Goods.tsx для анализа.
+Что дальше Реализовать /goods: расширить routers/goods.py (GET /goods с фильтрами по ean13, name, brand, категориям; JOIN с prices для цен); доработать Goods.tsx (таблица с фильтрами, пагинация, цены). Добавить тесты для Moderator.tsx и SearchWB.tsx. Создать страницу для заполнения categories и competitors для search_wb. Если нужны категории для /goods, расширить goods.py (API для categories, goods_categories) и Goods.tsx (фильтры по категориям). Поделиться routers/goods.py и Goods.tsx для доработки.

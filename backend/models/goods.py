@@ -9,7 +9,14 @@ class Goods(Base):
     unit_id = Column(Integer, ForeignKey("units.id"), nullable=True)
     description = Column(String(500), nullable=True)
     category = Column(String(50), nullable=True)
+    brand = Column(String(50), nullable=True)
     stock = Column(Integer, default=0)
 
-    prices = relationship("Prices", back_populates="goods")  # Добавляем связь с Prices
+    prices = relationship("Prices", back_populates="goods")
     unit = relationship("Unit", back_populates="goods")
+    # Добавлена связь с GoodsWB
+    goods_wb = relationship(
+        "GoodsWB",
+        secondary="goods_wb_goods",
+        back_populates="goods"
+    )

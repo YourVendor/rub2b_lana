@@ -11,6 +11,7 @@ class CompanyItem(Base):
     ean13 = Column(String(13), nullable=True)
     name = Column(String(200), nullable=False)
     unit_id = Column(Integer, ForeignKey("units.id"), nullable=False)
+    brand = Column(String(50), nullable=True)
     rrprice = Column(Float, nullable=False)
     microwholeprice = Column(Float, nullable=True)
     mediumwholeprice = Column(Float, nullable=True)

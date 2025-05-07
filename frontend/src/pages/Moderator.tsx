@@ -2,7 +2,53 @@ import React, { useState, useEffect, useCallback } from "react";
 import * as Papa from "papaparse";
 import { CompanyItem, Company, Config } from "../types";
 
-// Новый компонент для формы загрузки прайса
+// Интерфейсы для внутренних типов
+interface PreviewItem {
+  [key: string]: string | number | null;
+}
+
+interface Unit {
+  id: number;
+  name: string;
+}
+
+interface DuplicateItem {
+  identifier: string;
+  name: string;
+  brand: string | null;
+  rrprice: number;
+  microwholeprice: number;
+  mediumwholeprice: number;
+  maxwholeprice: number;
+  stock: number;
+  selected?: boolean;
+}
+
+interface NewItem {
+  identifier: string;
+  name: string;
+  ean13: string | null;
+  unit: string;
+  brand: string | null;
+  rrprice: number;
+  microwholeprice: number;
+  mediumwholeprice: number;
+  maxwholeprice: number;
+  stock: number;
+}
+
+interface ZeroPriceRow {
+  identifier: string;
+  name: string;
+  brand: string | null;
+  rrprice: number | null;
+  microwholeprice: number | null;
+  mediumwholeprice: number | null;
+  maxwholeprice: number | null;
+  zero_price_action?: string;
+}
+
+// Компонент для формы загрузки прайса
 const PriceUploadForm: React.FC<{
   config: Config;
   setConfig: React.Dispatch<React.SetStateAction<Config>>;
@@ -66,6 +112,15 @@ const PriceUploadForm: React.FC<{
           type="text"
           value={config.unit_column}
           onChange={(e) => setConfig((prev) => ({ ...prev, unit_column: e.target.value }))}
+        />
+      </div>
+      <div>
+        <label>Колонка бренда:</label>
+        <input
+          type="text"
+          value={config.brand_column}
+          onChange={(e) => setConfig((prev) => ({ ...prev, brand_column: e.target.value }))}
+          placeholder="Напр., Бренд"
         />
       </div>
       <div>
@@ -149,58 +204,16 @@ const PriceUploadForm: React.FC<{
   );
 };
 
-interface PreviewItem {
-  [key: string]: string | number | null;
-}
-
-interface Unit {
-  id: number;
-  name: string;
-}
-
-interface DuplicateItem {
-  identifier: string;
-  name: string;
-  rrprice: number;
-  microwholeprice: number;
-  mediumwholeprice: number;
-  maxwholeprice: number;
-  stock: number;
-  selected?: boolean;
-}
-
-interface NewItem {
-  identifier: string;
-  name: string;
-  ean13: string | null;
-  unit: string;
-  rrprice: number;
-  microwholeprice: number;
-  mediumwholeprice: number;
-  maxwholeprice: number;
-  stock: number;
-}
-
-interface ZeroPriceRow {
-  identifier: string;
-  name: string;
-  rrprice: number | null;
-  microwholeprice: number | null;
-  mediumwholeprice: number | null;
-  maxwholeprice: number | null;
-  zero_price_action?: string;
-}
-
 const Moderator: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<PreviewItem[]>([]);
-  // Изменение: добавлена типизация Config
   const [config, setConfig] = useState<Config>({
     company_id: 0,
     identifier_column: "",
     ean13_column: "",
     name_column: "",
     unit_column: "",
+    brand_column: "",
     rrprice_column: "",
     microwholeprice_column: "",
     mediumwholeprice_column: "",
@@ -218,6 +231,7 @@ const Moderator: React.FC = () => {
     ean13: true,
     name: true,
     unit_id: true,
+    brand: true,
     rrprice: true,
     microwholeprice: true,
     mediumwholeprice: true,
@@ -228,14 +242,13 @@ const Moderator: React.FC = () => {
   const [page, setPage] = useState(1);
   const [duplicates, setDuplicates] = useState<DuplicateItem[]>([]);
   const [unknownUnits, setUnknownUnits] = useState<string[]>([]);
-  const [zeroPriceRows, setZeroPriceRows] = useState<ZeroPriceRow[]>([]);
+  const [zeroPriceRows, setZeroPriceRow] = useState<ZeroPriceRow[]>([]);
   const [newItems, setNewItems] = useState<NewItem[]>([]);
   const [unitMappings, setUnitMappings] = useState<{ [key: string]: string }>({});
   const [ean13Decisions] = useState<{ [key: string]: string }>({});
   const [confirmedItems, setConfirmedItems] = useState<NewItem[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
 
-  // Изменение: убрана setConfig из loadItems, перенесена в loadCompanies
   const loadItems = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token || !config.company_id) return;
@@ -251,7 +264,6 @@ const Moderator: React.FC = () => {
     }
   }, [config.company_id]);
 
-  // Изменение: добавлена логика setConfig из loadItems
   const loadCompanies = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -333,12 +345,12 @@ const Moderator: React.FC = () => {
         throw new Error(errorData.detail || "Ошибка загрузки");
       }
       const data = await response.json();
-      console.log("Preview data:", data); // Отладка
+      console.log("Preview data:", data);
       setPreview(data.preview || []);
       setColumns(data.columns || []);
       setDuplicates(data.duplicates || []);
       setUnknownUnits(data.unknown_units || []);
-      setZeroPriceRows(data.zero_price_rows || []);
+      setZeroPriceRow(data.zero_price_rows || []);
       setNewItems(data.new_items || []);
       setError(null);
       loadItems();
@@ -366,7 +378,7 @@ const Moderator: React.FC = () => {
         ean13_decisions: ean13Decisions,
         unit_mappings: unitMappings,
       };
-      console.log("Config size:", JSON.stringify(configData).length); // Отладка размера config
+      console.log("Config size:", JSON.stringify(configData).length);
       formData.append("config", JSON.stringify(configData));
       const response = await fetch("http://127.0.0.1:8000/moderator/confirm-upload", {
         method: "POST",
@@ -422,7 +434,6 @@ const Moderator: React.FC = () => {
   return (
     <div>
       <h1>Модератор</h1>
-      {/* Изменение: форма загрузки прайса вынесена в PriceUploadForm */}
       <PriceUploadForm
         config={config}
         setConfig={setConfig}
@@ -441,6 +452,7 @@ const Moderator: React.FC = () => {
               <tr>
                 <th>Идентификатор</th>
                 <th>Наименование</th>
+                <th>Бренд</th>
                 <th>Розничная цена</th>
                 <th>Микроопт</th>
                 <th>Среднеопт</th>
@@ -454,6 +466,7 @@ const Moderator: React.FC = () => {
                 <tr key={index}>
                   <td>{dup.identifier}</td>
                   <td>{dup.name}</td>
+                  <td>{dup.brand || "-"}</td>
                   <td>{dup.rrprice}</td>
                   <td>{dup.microwholeprice}</td>
                   <td>{dup.mediumwholeprice}</td>
@@ -520,6 +533,7 @@ const Moderator: React.FC = () => {
               <tr>
                 <th>Идентификатор</th>
                 <th>Наименование</th>
+                <th>Бренд</th>
                 <th>Розничная цена</th>
                 <th>Микроопт</th>
                 <th>Среднеопт</th>
@@ -532,6 +546,7 @@ const Moderator: React.FC = () => {
                 <tr key={index}>
                   <td>{row.identifier}</td>
                   <td>{row.name}</td>
+                  <td>{row.brand || "-"}</td>
                   <td>{row.rrprice}</td>
                   <td>{row.microwholeprice}</td>
                   <td>{row.mediumwholeprice}</td>
@@ -542,7 +557,7 @@ const Moderator: React.FC = () => {
                       onChange={(e) => {
                         const newRows = [...zeroPriceRows];
                         newRows[index].zero_price_action = e.target.value;
-                        setZeroPriceRows(newRows);
+                        setZeroPriceRow(newRows);
                       }}
                     >
                       <option value="ignore">Игнорировать</option>
@@ -570,6 +585,7 @@ const Moderator: React.FC = () => {
               <tr>
                 <th>Идентификатор</th>
                 <th>Наименование</th>
+                <th>Бренд</th>
                 <th>EAN-13</th>
                 <th>Единица</th>
                 <th>Розничная цена</th>
@@ -585,6 +601,7 @@ const Moderator: React.FC = () => {
                 <tr key={index}>
                   <td>{item.identifier}</td>
                   <td>{item.name}</td>
+                  <td>{item.brand || "-"}</td>
                   <td>{item.ean13 || "-"}</td>
                   <td>{item.unit}</td>
                   <td>{item.rrprice}</td>
@@ -617,6 +634,7 @@ const Moderator: React.FC = () => {
               const csv = newItems.map((item) => ({
                 identifier: item.identifier,
                 name: item.name,
+                brand: item.brand,
                 ean13: item.ean13,
                 unit: item.unit,
                 rrprice: item.rrprice,
@@ -699,6 +717,7 @@ const Moderator: React.FC = () => {
             {visibleColumns.ean13 && <th>EAN-13</th>}
             {visibleColumns.name && <th>Наименование</th>}
             {visibleColumns.unit_id && <th>Единица</th>}
+            {visibleColumns.brand && <th>Бренд</th>}
             {visibleColumns.rrprice && <th>Розничная цена</th>}
             {visibleColumns.microwholeprice && <th>Микроопт</th>}
             {visibleColumns.mediumwholeprice && <th>Среднеопт</th>}
@@ -746,6 +765,20 @@ const Moderator: React.FC = () => {
                       </option>
                     ))}
                   </select>
+                </td>
+              )}
+              {visibleColumns.brand && (
+                <td>
+                  <input
+                    value={item.brand || ""}
+                    onChange={(e) =>
+                      setItems(
+                        items.map((i) =>
+                          i.id === item.id ? { ...i, brand: e.target.value || null } : i
+                        )
+                      )
+                    }
+                  />
                 </td>
               )}
               {visibleColumns.rrprice && (

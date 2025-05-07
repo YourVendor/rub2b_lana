@@ -5,6 +5,7 @@ export interface CompanyItem {
   ean13?: string;
   name: string;
   unit_id?: number;
+  brand?: string | null;
   rrprice: number;
   microwholeprice: number;
   mediumwholeprice: number;
@@ -31,17 +32,18 @@ export interface Goods {
   unit_id: number;
   description?: string;
   category?: string;
+  brand?: string | null;
   stock: number;
   prices: Price[];
 }
 
-// Добавлен интерфейс Config для типизации config в Moderator.tsx
 export interface Config {
   company_id: number;
   identifier_column: string;
   ean13_column: string;
   name_column: string;
   unit_column: string;
+  brand_column: string; // Новое поле
   rrprice_column: string;
   microwholeprice_column: string;
   mediumwholeprice_column: string;
