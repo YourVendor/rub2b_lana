@@ -1,7 +1,6 @@
-// frontend/src/components/Dashboard.tsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import jwtDecode from "jwt-decode"; // Исправлено
+import jwtDecode from "jwt-decode";
 
 interface TokenPayload {
   role: string;
@@ -28,6 +27,11 @@ const Dashboard: React.FC = () => {
       {(role === "moderator" || role === "admin") && (
         <button onClick={() => navigate("/moderator-item-to-goods")}>
           Сравнение позиций с витриной
+        </button>
+      )}
+      {(role === "moderator" || role === "admin") && (
+        <button onClick={() => navigate("/search_wb")}>
+          Поисковые запросы Wildberries
         </button>
       )}
     </div>

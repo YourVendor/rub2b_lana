@@ -5,6 +5,7 @@ import Admin from "./pages/Admin";
 import Moderator from "./pages/Moderator";
 import Goods from "./pages/Goods";
 import ModeratorItemToGoods from "./pages/Moderator_item_to_goods";
+import SearchWB from "./pages/SearchWB";
 
 const App: React.FC = () => {
   const [login, setLogin] = useState("");
@@ -65,6 +66,7 @@ const App: React.FC = () => {
       <Route path="/moderator" element={<Moderator />} />
       <Route path="/goods" element={<Goods />} />
       <Route path="/moderator-item-to-goods" element={<ModeratorItemToGoods />} />
+      <Route path="/search_wb" element={<SearchWB />} />
       <Route path="*" element={<h1>404: Страница не найдена</h1>} />
     </Routes>
   );

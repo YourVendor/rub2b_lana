@@ -43,7 +43,7 @@ export interface Config {
   ean13_column: string;
   name_column: string;
   unit_column: string;
-  brand_column: string; // Новое поле
+  brand_column: string;
   rrprice_column: string;
   microwholeprice_column: string;
   mediumwholeprice_column: string;
@@ -52,4 +52,21 @@ export interface Config {
   skip_first_row: boolean;
   update_missing: string;
   update_name: boolean;
+}
+
+export interface SearchWBData {
+  text: string;
+  frequency_per_month: number;
+  categories: string;
+  competitors: CompetitorsWB[];
+}
+
+export interface Category {
+  id: number;
+  name: string;
+}
+
+export interface CompetitorsWB {
+  name: string;
+  hyperlink: string;
 }
