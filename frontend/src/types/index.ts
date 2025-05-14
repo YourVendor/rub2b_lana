@@ -31,7 +31,8 @@ export interface Goods {
   name: string;
   unit_id: number;
   description?: string;
-  category?: string;
+  category?: string; // Из модели Goods в бэкенде
+  categories?: string; // Из /goods_paginated (список категорий через запятую)
   brand?: string | null;
   stock: number;
   prices: Price[];
@@ -69,4 +70,9 @@ export interface Category {
 export interface CompetitorsWB {
   name: string;
   hyperlink: string;
+}
+
+export interface SearchWordsWB {
+  id: number;
+  name: string;
 }

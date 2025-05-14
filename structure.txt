@@ -1,3 +1,9 @@
+PS D:\VSCODE\rub2b_lana\rub2b_lana> uvicorn backend.main:app --host 127.0.0.1 --port 8000
+PS D:\VSCODE\rub2b_lana\rub2b_lana\frontend> npm start
+PS D:\VSCODE\rub2b_lana\rub2b_lana> psql -U germush -h localhost -d rub2b
+PS D:\VSCODE\rub2b_lana\rub2b_lana> alembic upgrade head
+PS D:\VSCODE\rub2b_lana\rub2b_lana> .\venv\Scripts\activate
+
 D:\VSCODE\rub2b_lana\rub2b_lana
 D:\VSCODE\rub2b_lana\rub2b_lana\__pycache__
 D:\VSCODE\rub2b_lana\rub2b_lana\__pycache__\main.cpython-39.pyc

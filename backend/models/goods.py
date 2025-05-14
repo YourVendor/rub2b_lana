@@ -14,9 +14,13 @@ class Goods(Base):
 
     prices = relationship("Prices", back_populates="goods")
     unit = relationship("Unit", back_populates="goods")
-    # Добавлена связь с GoodsWB
     goods_wb = relationship(
         "GoodsWB",
         secondary="goods_wb_goods",
+        back_populates="goods"
+    )
+    categories = relationship(
+        "Category",
+        secondary="goods_categories",
         back_populates="goods"
     )

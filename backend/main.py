@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from backend.database import get_db
-from backend.routers import auth, admin, goods, moderator, units, search_wb, competitors_wb, search_words_wb, goods_wb
+from backend.routers import auth, admin, goods, moderator, units, search_wb, competitors_wb, search_words_wb, goods_wb, categories_search_words
 from backend.models.user import Base
 from pydantic import BaseModel
 from typing import Optional
@@ -36,11 +36,11 @@ app.include_router(admin.router, prefix="/admin", tags=["admin"])
 app.include_router(moderator.router, prefix="/moderator", tags=["moderator"])
 app.include_router(goods.router, prefix="/goods", tags=["goods"])
 app.include_router(units.router, prefix="/units", tags=["units"])
-# Добавлены новые роутеры
 app.include_router(search_wb.router, prefix="/search_wb", tags=["search_wb"])
 app.include_router(competitors_wb.router, prefix="/competitors_wb", tags=["competitors_wb"])
 app.include_router(search_words_wb.router, prefix="/search_words_wb", tags=["search_words_wb"])
 app.include_router(goods_wb.router, prefix="/goods_wb", tags=["goods_wb"])
+app.include_router(categories_search_words.router, prefix="/categories_search_words", tags=["categories_search_words"])
 
 # Модели для валидации
 class UserIn(BaseModel):

@@ -8,6 +8,7 @@ class SearchWB(Base):
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String(250), nullable=False)
     frequency_per_month = Column(Integer, nullable=False)
+    count_competitors = Column(Integer, nullable=False)
 
     categories = relationship(
         "Category",

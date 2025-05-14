@@ -11,3 +11,74 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+  vertical-align: top;
+  word-wrap: break-word;
+}
+
+th:nth-child(1), td:nth-child(1) {
+  width: 15%; /* EAN13 */
+}
+
+th:nth-child(2), td:nth-child(2) {
+  width: 25%; /* Наименование */
+}
+
+th:nth-child(3), td:nth-child(3) {
+  width: 20%; /* Описание */
+}
+
+th:nth-child(4), td:nth-child(4) {
+  width: 25%; /* Категории */
+}
+
+th:nth-child(5), td:nth-child(5) {
+  width: 15%; /* Ключевые слова */
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+select, input, button {
+  margin: 4px;
+  padding: 5px;
+  width: 90%;
+}
+
+select[multiple] {
+  width: 90%;
+  height: 100px;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #45a049;
+}

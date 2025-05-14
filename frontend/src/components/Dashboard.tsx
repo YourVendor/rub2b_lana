@@ -34,6 +34,11 @@ const Dashboard: React.FC = () => {
           Поисковые запросы Wildberries
         </button>
       )}
+      {(role === "moderator" || role === "admin") && (
+        <button onClick={() => navigate("/categories_search_words")}>
+          Категории и ключевые слова
+        </button>
+      )}
     </div>
   );
 };
